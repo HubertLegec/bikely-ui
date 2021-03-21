@@ -1,0 +1,8 @@
+.loginForm {
+  justify-content: flex-end;
+}
+
+.submitButton {
+  max-width: 100px;
+  align-self: end;
+}
