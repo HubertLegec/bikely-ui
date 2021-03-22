@@ -1,14 +1,16 @@
 import { useFormik } from "formik";
 import { useState } from "react";
+import { FormGroup, Button } from "@material-ui/core";
 import { EmailInput } from "./inputs/email";
 import { PasswordInput } from "./inputs/password";
-import { FormGroup, Button } from "@material-ui/core";
-import { validateEmail, validatePassword } from "./validation";
+import { UsernameInput } from "./inputs/username";
+import { validateEmail, validatePassword, validateUsername } from "./validation";
 import styles from "./form.module.css";
 
-export function LoginForm(props) {
-  const [inputValues, setInputValues] = useState({ email: "", password: "" });
-  const [inputErrors, setInputErrors] = useState({ email: "", password: "" });
+export function RegisterForm(props) {
+  const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
+  const [inputErrors, setInputErrors] = useState({ email: "", password: "", username: "" });
+
   const validate = values => {
     const errors = inputErrors;
     let isAllValid = true;
@@ -17,17 +19,20 @@ export function LoginForm(props) {
       errors.email = validateEmail(values.email);
     } else if (inputValues.password !== values.password) {
       errors.password = validatePassword(values.password);
+    } else if (inputValues.username !== values.username) {
+      errors.username = validateUsername(values.username);
     } else {
       errors.email = validateEmail(values.email);
       errors.password = validatePassword(values.password);
-    }
-
-    for (const error in errors) {
-      if (errors[error].length !== 0) isAllValid = false;
+      errors.username = validateUsername(values.username);
     }
 
     setInputErrors(errors);
     setInputValues(values);
+    for (const error in errors) {
+      if (errors[error].length !== 0) isAllValid = false;
+    }
+
     return isAllValid ? null : errors;
   };
 
@@ -40,7 +45,7 @@ export function LoginForm(props) {
   };
 
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { email: "", password: "", username: "" },
     validate,
     onSubmit,
   });
@@ -57,8 +62,15 @@ export function LoginForm(props) {
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>
-
-        <Button className={styles.submitButton} type="submit" disabled={formik.isSubmitting}>
+        <UsernameInput
+          errors={formik.errors.username}
+          id="username"
+          name="username"
+          label="Username"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+        ></UsernameInput>
+        <Button type="submit" className={styles.submitButton} disabled={formik.isSubmitting}>
           Submit
         </Button>
       </FormGroup>

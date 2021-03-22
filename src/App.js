@@ -1,10 +1,12 @@
 import "./App.css";
-import { LoginPanel } from "./auth/login";
+import { LoginForm } from "./auth/login";
+import { RegisterForm } from "./auth/register";
 
 function App() {
   return (
     <div className="App">
-      <LoginPanel></LoginPanel>
+      <LoginForm></LoginForm>
+      <RegisterForm></RegisterForm>
     </div>
   );
 }
