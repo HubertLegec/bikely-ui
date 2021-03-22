@@ -5,10 +5,13 @@ import { PasswordInput } from "./inputs/password";
 import { FormGroup, Button } from "@material-ui/core";
 import { validateEmail, validatePassword } from "./validation";
 import styles from "./form.module.css";
+import { postWithoutAuthentication } from "../requests/postWithoutAuthentication";
 
 export function LoginForm(props) {
   const [inputValues, setInputValues] = useState({ email: "", password: "" });
   const [inputErrors, setInputErrors] = useState({ email: "", password: "" });
+  const [formError, setFormError] = useState("");
+
   const validate = values => {
     const errors = inputErrors;
     let isAllValid = true;
@@ -31,12 +34,12 @@ export function LoginForm(props) {
     return isAllValid ? null : errors;
   };
 
-  const onSubmit = (values, { setSubmitting }) => {
-    setTimeout(() => {
-      alert(JSON.stringify(values, null, 2));
-
-      setSubmitting(false);
-    }, 400);
+  const onSubmit = async (values, { setSubmitting }) => {
+    setFormError("");
+    const result = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/login", values);
+    if (result.error) setFormError("Invalid credentials");
+    else localStorage.setItem("access_token", result.access_token);
+    setSubmitting(false);
   };
 
   const formik = useFormik({
@@ -57,7 +60,7 @@ export function LoginForm(props) {
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>
-
+        <div className={styles.formError}>{formError}</div>
         <Button className={styles.submitButton} type="submit" disabled={formik.isSubmitting}>
           Submit
         </Button>

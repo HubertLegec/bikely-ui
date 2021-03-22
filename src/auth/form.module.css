@@ -6,3 +6,10 @@
   max-width: 100px;
   align-self: end;
 }
+
+.formError {
+  max-width: 300px;
+  height: 25px;
+  align-self: end;
+  color: #f44336;
+}

@@ -6,10 +6,12 @@ import { PasswordInput } from "./inputs/password";
 import { UsernameInput } from "./inputs/username";
 import { validateEmail, validatePassword, validateUsername } from "./validation";
 import styles from "./form.module.css";
+import { postWithoutAuthentication } from "../requests/postWithoutAuthentication";
 
 export function RegisterForm(props) {
   const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
   const [inputErrors, setInputErrors] = useState({ email: "", password: "", username: "" });
+  const [formError, setFormError] = useState("");
 
   const validate = values => {
     const errors = inputErrors;
@@ -36,12 +38,15 @@ export function RegisterForm(props) {
     return isAllValid ? null : errors;
   };
 
-  const onSubmit = (values, { setSubmitting }) => {
-    setTimeout(() => {
-      alert(JSON.stringify(values, null, 2));
+  const onSubmit = async (values, { setSubmitting }) => {
+    setFormError("");
+    const register = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/register", values);
+    if (!register.error) {
+      const login = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/login", values);
+      if (!login.error) setFormError("Something went wrong");
+    } else setFormError("Something went wrong");
 
-      setSubmitting(false);
-    }, 400);
+    setSubmitting(false);
   };
 
   const formik = useFormik({
@@ -70,6 +75,7 @@ export function RegisterForm(props) {
           value={formik.values.email}
           onChange={formik.handleChange}
         ></UsernameInput>
+        <div className={styles.formError}>{formError}</div>
         <Button type="submit" className={styles.submitButton} disabled={formik.isSubmitting}>
           Submit
         </Button>
