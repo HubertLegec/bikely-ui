@@ -1,15 +1,16 @@
 import { useFormik } from "formik";
 import { useState } from "react";
+import { FormGroup, Button } from "@material-ui/core";
 import { EmailInput } from "./inputs/email";
 import { PasswordInput } from "./inputs/password";
-import { FormGroup, Button } from "@material-ui/core";
-import { validateEmail, validatePassword } from "./validation";
+import { UsernameInput } from "./inputs/username";
+import { validateEmail, validatePassword, validateUsername } from "./validation";
 import styles from "./form.module.css";
-import { postWithoutAuthentication } from "../requests/postWithoutAuthentication";
+import { postWithoutAuthentication } from "../../requests/postWithoutAuthentication";
 
-export function LoginForm(props) {
-  const [inputValues, setInputValues] = useState({ email: "", password: "" });
-  const [inputErrors, setInputErrors] = useState({ email: "", password: "" });
+export function RegisterForm(props) {
+  const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
+  const [inputErrors, setInputErrors] = useState({ email: "", password: "", username: "" });
   const [formError, setFormError] = useState("");
 
   const validate = values => {
@@ -20,30 +21,36 @@ export function LoginForm(props) {
       errors.email = validateEmail(values.email);
     } else if (inputValues.password !== values.password) {
       errors.password = validatePassword(values.password);
+    } else if (inputValues.username !== values.username) {
+      errors.username = validateUsername(values.username);
     } else {
       errors.email = validateEmail(values.email);
       errors.password = validatePassword(values.password);
-    }
-
-    for (const error in errors) {
-      if (errors[error].length !== 0) isAllValid = false;
+      errors.username = validateUsername(values.username);
     }
 
     setInputErrors(errors);
     setInputValues(values);
+    for (const error in errors) {
+      if (errors[error].length !== 0) isAllValid = false;
+    }
+
     return isAllValid ? null : errors;
   };
 
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError("");
-    const result = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/login", values);
-    if (result.error) setFormError("Invalid credentials");
-    else localStorage.setItem("access_token", result.access_token);
+    const register = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/register", values);
+    if (!register.error) {
+      const login = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/login", values);
+      if (!login.error) setFormError("Something went wrong");
+    } else setFormError("Something went wrong");
+
     setSubmitting(false);
   };
 
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { email: "", password: "", username: "" },
     validate,
     onSubmit,
   });
@@ -60,8 +67,16 @@ export function LoginForm(props) {
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>
+        <UsernameInput
+          errors={formik.errors.username}
+          id="username"
+          name="username"
+          label="Username"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+        ></UsernameInput>
         <div className={styles.formError}>{formError}</div>
-        <Button className={styles.submitButton} type="submit" disabled={formik.isSubmitting}>
+        <Button type="submit" className={styles.submitButton} disabled={formik.isSubmitting}>
           Submit
         </Button>
       </FormGroup>

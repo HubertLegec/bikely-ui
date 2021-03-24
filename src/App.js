@@ -1,13 +1,22 @@
 import "./App.css";
-import { LoginForm } from "./auth/login";
-import { RegisterForm } from "./auth/register";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Nav } from "./components/nav";
+import { LoginPage } from "./pages/loginPage";
+import { RegisterPage } from "./pages/registerPage";
 
 function App() {
   return (
-    <div className="App">
-      <LoginForm></LoginForm>
-      <RegisterForm></RegisterForm>
-    </div>
+    <Router>
+      <Nav></Nav>
+      <Switch>
+        <Route path="/login">
+          <LoginPage></LoginPage>
+        </Route>
+        <Route path="/register">
+          <RegisterPage></RegisterPage>
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
