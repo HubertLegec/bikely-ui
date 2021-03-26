@@ -26,18 +26,26 @@ afterEach(() => {
   container = null;
 });
 
+const setup = () => {
+  act(() => {
+    ReactDOM.render(<LoginForm></LoginForm>, container);
+  });
+  const button = container.querySelector("button");
+  const passwordInput = container.querySelector("#password");
+  const emailInput = container.querySelector("#email");
+
+  return { button, passwordInput, emailInput };
+};
+
 describe("Validation tests", () => {
   it("Should display required under empty inputs", async () => {
     const promise = Promise.resolve();
+    const { button } = setup();
+    const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
-    act(() => {
-      ReactDOM.render(<LoginForm></LoginForm>, container);
-    });
-    const button = container.querySelector("button");
     act(() => {
       button.dispatchEvent(new MouseEvent("click"));
     });
-    const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
     await waitFor(
       () => {
@@ -51,16 +59,12 @@ describe("Validation tests", () => {
 
   it("Should display too short if password has less than 8 chars", async () => {
     const promise = Promise.resolve();
+    const { passwordInput } = setup();
+    const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
-    act(() => {
-      ReactDOM.render(<LoginForm></LoginForm>, container);
-    });
-    const passwordInput = container.querySelector("#password");
     act(() => {
       fireEvent.change(passwordInput, { target: { value: "1234" } });
     });
-
-    const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
     await waitFor(
       () => {
@@ -95,18 +99,13 @@ describe("Validation tests", () => {
 
   it("Shouldn't display anything if inputs are valid", async () => {
     const promise = Promise.resolve();
+    const { emailInput, passwordInput } = setup();
+    const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
-    act(() => {
-      ReactDOM.render(<LoginForm></LoginForm>, container);
-    });
-    const emailInput = container.querySelector("#email");
-    const passwordInput = container.querySelector("#password");
     act(() => {
       fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
       fireEvent.change(passwordInput, { target: { value: "validPassword" } });
     });
-
-    const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
     await waitFor(
       () => {
@@ -122,15 +121,9 @@ describe("Validation tests", () => {
 describe("Response handling", () => {
   it("Redirect after successful login", async () => {
     const promise = Promise.resolve();
+    const { emailInput, passwordInput, button } = setup();
     const mockResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulResponse);
     BikelyApi.login = mockResult;
-
-    act(() => {
-      ReactDOM.render(<LoginForm></LoginForm>, container);
-    });
-    const emailInput = container.querySelector("#email");
-    const button = container.querySelector("button");
-    const passwordInput = container.querySelector("#password");
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
@@ -147,15 +140,10 @@ describe("Response handling", () => {
 
   it("Should display form error after unsuccessful login", async () => {
     const promise = Promise.resolve();
+    const { emailInput, passwordInput, button } = setup();
     const mockResult = jest.fn().mockResolvedValueOnce(mockedUnsuccessfulResponse);
+    const formError = container.querySelector("#formError");
     BikelyApi.login = mockResult;
-
-    act(() => {
-      ReactDOM.render(<LoginForm></LoginForm>, container);
-    });
-    const emailInput = container.querySelector("#email");
-    const button = container.querySelector("button");
-    const passwordInput = container.querySelector("#password");
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
@@ -165,8 +153,6 @@ describe("Response handling", () => {
     act(() => {
       button.dispatchEvent(new MouseEvent("click"));
     });
-
-    const formError = container.querySelector("#formError");
 
     await waitFor(
       () => {
