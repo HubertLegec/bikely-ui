@@ -5,7 +5,7 @@ import { PasswordInput } from "./inputs/password";
 import { FormGroup, Button } from "@material-ui/core";
 import { validateEmail, validatePassword } from "./validation";
 import styles from "./form.module.css";
-import { postWithoutAuthentication } from "../../requests/postWithoutAuthentication";
+import { BikelyApi } from "../../api/BikelyApi";
 
 export function LoginForm(props) {
   const [inputValues, setInputValues] = useState({ email: "", password: "" });
@@ -36,9 +36,8 @@ export function LoginForm(props) {
 
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError("");
-    const result = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/login", values);
+    const result = await BikelyApi.login(values);
     if (result.error) setFormError("Invalid credentials");
-    else localStorage.setItem("access_token", result.access_token);
     setSubmitting(false);
   };
 
@@ -60,7 +59,9 @@ export function LoginForm(props) {
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>
-        <div className={styles.formError}>{formError}</div>
+        <div id="formError" className={styles.formError}>
+          {formError}
+        </div>
         <Button className={styles.submitButton} type="submit" disabled={formik.isSubmitting}>
           Submit
         </Button>

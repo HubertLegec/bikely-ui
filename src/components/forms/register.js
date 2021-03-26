@@ -6,7 +6,7 @@ import { PasswordInput } from "./inputs/password";
 import { UsernameInput } from "./inputs/username";
 import { validateEmail, validatePassword, validateUsername } from "./validation";
 import styles from "./form.module.css";
-import { postWithoutAuthentication } from "../../requests/postWithoutAuthentication";
+import { BikelyApi } from "../../api/BikelyApi";
 
 export function RegisterForm(props) {
   const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
@@ -40,9 +40,9 @@ export function RegisterForm(props) {
 
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError("");
-    const register = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/register", values);
+    const register = await BikelyApi.register(values);
     if (!register.error) {
-      const login = await postWithoutAuthentication("https://coderscamp-bikely.herokuapp.com/auth/login", values);
+      const login = await BikelyApi.login(values);
       if (!login.error) setFormError("Something went wrong");
     } else setFormError("Something went wrong");
 

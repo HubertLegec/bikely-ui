@@ -5,12 +5,12 @@ export function Nav() {
     <AppBar position="sticky">
       <Toolbar>
         <IconButton edge="start"></IconButton>
-        <Button>
-          <Link to="/login">Login</Link>
-        </Button>
-        <Button>
-          <Link to="/register">Register</Link>
-        </Button>
+        <Link to="/login">
+          <Button>Login</Button>
+        </Link>
+        <Link to="/register">
+          <Button>Register</Button>
+        </Link>
       </Toolbar>
     </AppBar>
   );
