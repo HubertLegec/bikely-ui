@@ -111,7 +111,7 @@ describe("Validation tests", () => {
 
     await waitFor(
       () => {
-        expect(elements[1].textContent).toEqual("Password too short");
+        expect(elements[1].textContent).toEqual("Username too short");
       },
       { timeout: 100 }
     );
@@ -142,28 +142,6 @@ describe("Validation tests", () => {
 });
 
 describe("Response handling", () => {
-  it("Redirect after successful registering and logging", async () => {
-    const promise = Promise.resolve();
-    const { emailInput, passwordInput, button } = setup();
-    const mockLoginResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulLoginResponse);
-    const mockRegisterResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulRegisterResponse);
-    BikelyApi.register = mockRegisterResult;
-    BikelyApi.login = mockLoginResult;
-
-    act(() => {
-      fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
-      fireEvent.change(passwordInput, { target: { value: "validPassword" } });
-      fireEvent.change(passwordInput, { target: { value: "validUsername" } });
-    });
-
-    act(() => {
-      button.dispatchEvent(new MouseEvent("click"));
-    });
-
-    expect(true).toEqual(true);
-    await act(() => promise);
-  });
-
   it("Should display form error after unsuccessful login", async () => {
     const promise = Promise.resolve();
     const { emailInput, passwordInput, button } = setup();

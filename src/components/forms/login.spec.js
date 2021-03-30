@@ -115,25 +115,6 @@ describe("Validation tests", () => {
 });
 
 describe("Response handling", () => {
-  it("Redirect after successful login", async () => {
-    const promise = Promise.resolve();
-    const { emailInput, passwordInput, button } = setup();
-    const mockResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulResponse);
-    BikelyApi.login = mockResult;
-
-    act(() => {
-      fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
-      fireEvent.change(passwordInput, { target: { value: "validPassword" } });
-    });
-
-    act(() => {
-      button.dispatchEvent(new MouseEvent("click"));
-    });
-
-    expect(true).toEqual(true);
-    await act(() => promise);
-  });
-
   it("Should display form error after unsuccessful login", async () => {
     const promise = Promise.resolve();
     const { emailInput, passwordInput, button } = setup();
