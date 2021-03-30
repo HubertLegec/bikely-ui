@@ -18,6 +18,6 @@ export function validateUsername(username) {
   if (!username) {
     return "Required";
   } else if (username.length < 5) {
-    return "Password too short";
+    return "Username too short";
   } else return "";
 }

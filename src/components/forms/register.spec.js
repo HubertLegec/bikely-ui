@@ -1,4 +1,4 @@
-import { LoginForm } from "./login";
+import { RegisterForm } from "./register";
 import ReactDOM from "react-dom";
 import { act, waitFor, fireEvent } from "@testing-library/react";
 import { BikelyApi } from "../../api/BikelyApi";
@@ -6,7 +6,7 @@ import { BikelyApi } from "../../api/BikelyApi";
 jest.mock("../../api/BikelyApi");
 
 let container;
-const mockedSuccessfulResponse = {
+const mockedSuccessfulLoginResponse = {
   access_token: "token",
 };
 
@@ -14,6 +14,11 @@ const mockedUnsuccessfulResponse = {
   message: "error",
   status: "400",
   error: true,
+};
+
+const mockedSuccessfulRegisterResponse = {
+  username: "username",
+  email: "email@test.com",
 };
 
 beforeEach(() => {
@@ -28,13 +33,14 @@ afterEach(() => {
 
 const setup = () => {
   act(() => {
-    ReactDOM.render(<LoginForm></LoginForm>, container);
+    ReactDOM.render(<RegisterForm></RegisterForm>, container);
   });
   const button = container.querySelector("button");
   const passwordInput = container.querySelector("#password");
+  const usernameInput = container.querySelector("#username");
   const emailInput = container.querySelector("#email");
 
-  return { button, passwordInput, emailInput };
+  return { button, passwordInput, emailInput, usernameInput };
 };
 
 describe("Validation tests", () => {
@@ -51,6 +57,7 @@ describe("Validation tests", () => {
       () => {
         expect(elements[0].textContent).toEqual("Required");
         expect(elements[1].textContent).toEqual("Required");
+        expect(elements[2].textContent).toEqual("Required");
       },
       { timeout: 100 }
     );
@@ -68,7 +75,7 @@ describe("Validation tests", () => {
 
     await waitFor(
       () => {
-        expect(elements[1].textContent).toEqual("Password too short");
+        expect(elements[2].textContent).toEqual("Password too short");
       },
       { timeout: 100 }
     );
@@ -93,20 +100,40 @@ describe("Validation tests", () => {
     await act(() => promise);
   });
 
+  it("Should display too short if username has less than 5 chars", async () => {
+    const promise = Promise.resolve();
+    const { usernameInput } = setup();
+    const elements = container.querySelectorAll(".MuiFormHelperText-root");
+
+    act(() => {
+      fireEvent.change(usernameInput, { target: { value: "134" } });
+    });
+
+    await waitFor(
+      () => {
+        expect(elements[1].textContent).toEqual("Password too short");
+      },
+      { timeout: 100 }
+    );
+    await act(() => promise);
+  });
+
   it("Shouldn't display anything if inputs are valid", async () => {
     const promise = Promise.resolve();
-    const { emailInput, passwordInput } = setup();
+    const { emailInput, passwordInput, usernameInput } = setup();
     const elements = container.querySelectorAll(".MuiFormHelperText-root");
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
       fireEvent.change(passwordInput, { target: { value: "validPassword" } });
+      fireEvent.change(usernameInput, { target: { value: "validUsername" } });
     });
 
     await waitFor(
       () => {
         expect(elements[0].textContent).toEqual("");
         expect(elements[1].textContent).toEqual("");
+        expect(elements[2].textContent).toEqual("");
       },
       { timeout: 100 }
     );
@@ -115,15 +142,18 @@ describe("Validation tests", () => {
 });
 
 describe("Response handling", () => {
-  it("Redirect after successful login", async () => {
+  it("Redirect after successful registering and logging", async () => {
     const promise = Promise.resolve();
     const { emailInput, passwordInput, button } = setup();
-    const mockResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulResponse);
-    BikelyApi.login = mockResult;
+    const mockLoginResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulLoginResponse);
+    const mockRegisterResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulRegisterResponse);
+    BikelyApi.register = mockRegisterResult;
+    BikelyApi.login = mockLoginResult;
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
       fireEvent.change(passwordInput, { target: { value: "validPassword" } });
+      fireEvent.change(passwordInput, { target: { value: "validUsername" } });
     });
 
     act(() => {
@@ -137,13 +167,16 @@ describe("Response handling", () => {
   it("Should display form error after unsuccessful login", async () => {
     const promise = Promise.resolve();
     const { emailInput, passwordInput, button } = setup();
-    const mockResult = jest.fn().mockResolvedValueOnce(mockedUnsuccessfulResponse);
+    const mockLoginResult = jest.fn().mockResolvedValueOnce(mockedUnsuccessfulResponse);
+    const mockRegisterResult = jest.fn().mockResolvedValueOnce(mockedSuccessfulRegisterResponse);
     const formError = container.querySelector("#formError");
-    BikelyApi.login = mockResult;
+    BikelyApi.register = mockRegisterResult;
+    BikelyApi.login = mockLoginResult;
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
       fireEvent.change(passwordInput, { target: { value: "validPassword" } });
+      fireEvent.change(passwordInput, { target: { value: "validUsername" } });
     });
 
     act(() => {
@@ -152,7 +185,33 @@ describe("Response handling", () => {
 
     await waitFor(
       () => {
-        expect(formError.textContent).toEqual("Invalid credentials");
+        expect(formError.textContent).toEqual("Something went wrong");
+      },
+      { timeout: 100 }
+    );
+    await act(() => promise);
+  });
+
+  it("Should display form error after unsuccessful registering", async () => {
+    const promise = Promise.resolve();
+    const { emailInput, passwordInput, button } = setup();
+    const mockRegisterResult = jest.fn().mockResolvedValueOnce(mockedUnsuccessfulResponse);
+    const formError = container.querySelector("#formError");
+    BikelyApi.register = mockRegisterResult;
+
+    act(() => {
+      fireEvent.change(emailInput, { target: { value: "valid@email.com" } });
+      fireEvent.change(passwordInput, { target: { value: "validPassword" } });
+      fireEvent.change(passwordInput, { target: { value: "validUsername" } });
+    });
+
+    act(() => {
+      button.dispatchEvent(new MouseEvent("click"));
+    });
+
+    await waitFor(
+      () => {
+        expect(formError.textContent).toEqual("Something went wrong");
       },
       { timeout: 100 }
     );

@@ -20,7 +20,7 @@ export class BikelyApi {
     });
     const result = await response.json();
     if (!response.ok) result.error = true;
-    else BikelyApi.accessToken(result.access_token);
+    else BikelyApi.accessToken = result.access_token;
     return result;
   }
 
@@ -36,5 +36,9 @@ export class BikelyApi {
     const result = await response.json();
     if (!response.ok) result.error = true;
     return result;
+  }
+
+  static userHasAuthenticated() {
+    return !!BikelyApi.accessToken;
   }
 }

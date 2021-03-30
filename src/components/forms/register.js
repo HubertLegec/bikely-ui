@@ -7,11 +7,13 @@ import { UsernameInput } from "./inputs/username";
 import { validateEmail, validatePassword, validateUsername } from "./validation";
 import styles from "./form.module.css";
 import { BikelyApi } from "../../api/BikelyApi";
+import { useHistory } from "react-router-dom";
 
 export function RegisterForm(props) {
   const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
   const [inputErrors, setInputErrors] = useState({ email: "", password: "", username: "" });
   const [formError, setFormError] = useState("");
+  const history = useHistory();
 
   const validate = values => {
     const errors = inputErrors;
@@ -43,7 +45,11 @@ export function RegisterForm(props) {
     const register = await BikelyApi.register(values);
     if (!register.error) {
       const login = await BikelyApi.login(values);
-      if (!login.error) setFormError("Something went wrong");
+      if (login.error) {
+        setFormError("Something went wrong");
+
+        setSubmitting(false);
+      } else if (BikelyApi.userHasAuthenticated()) history.push("/");
     } else setFormError("Something went wrong");
 
     setSubmitting(false);
@@ -59,6 +65,14 @@ export function RegisterForm(props) {
     <form onSubmit={formik.handleSubmit}>
       <FormGroup className={styles.loginForm}>
         <EmailInput errors={formik.errors.email} id="email" name="email" label="Email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
+        <UsernameInput
+          errors={formik.errors.username}
+          id="username"
+          name="username"
+          label="Username"
+          value={formik.values.username}
+          onChange={formik.handleChange}
+        ></UsernameInput>
         <PasswordInput
           errors={formik.errors.password}
           id="password"
@@ -67,15 +81,9 @@ export function RegisterForm(props) {
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>
-        <UsernameInput
-          errors={formik.errors.username}
-          id="username"
-          name="username"
-          label="Username"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-        ></UsernameInput>
-        <div className={styles.formError}>{formError}</div>
+        <div id="formError" className={styles.formError}>
+          {formError}
+        </div>
         <Button type="submit" className={styles.submitButton} disabled={formik.isSubmitting}>
           Submit
         </Button>

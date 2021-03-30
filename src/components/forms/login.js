@@ -6,11 +6,13 @@ import { FormGroup, Button } from "@material-ui/core";
 import { validateEmail, validatePassword } from "./validation";
 import styles from "./form.module.css";
 import { BikelyApi } from "../../api/BikelyApi";
+import { useHistory } from "react-router-dom";
 
 export function LoginForm(props) {
   const [inputValues, setInputValues] = useState({ email: "", password: "" });
   const [inputErrors, setInputErrors] = useState({ email: "", password: "" });
   const [formError, setFormError] = useState("");
+  const history = useHistory();
 
   const validate = values => {
     const errors = inputErrors;
@@ -37,8 +39,12 @@ export function LoginForm(props) {
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError("");
     const result = await BikelyApi.login(values);
-    if (result.error) setFormError("Invalid credentials");
-    setSubmitting(false);
+    if (result.error) {
+      setFormError("Invalid credentials");
+      setSubmitting(false);
+    } else if (BikelyApi.userHasAuthenticated()) {
+      history.push("/");
+    }
   };
 
   const formik = useFormik({
