@@ -1,3 +1,4 @@
+import React from "react";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { EmailInput } from "./inputs/email";
@@ -56,12 +57,11 @@ export function LoginForm() {
   return (
     <form className="login" onSubmit={formik.handleSubmit}>
       <FormGroup className={styles.loginForm}>
-        <EmailInput errors={formik.errors.email} id="email" name="email" label="Email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
+        <EmailInput errors={formik.errors.email} id="email" name="email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
         <PasswordInput
           errors={formik.errors.password}
           id="password"
           name="password"
-          label="Password"
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>

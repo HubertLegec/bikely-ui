@@ -1,19 +1,21 @@
+import React from "react";
 import { FormHelperText, FormControl, InputLabel, Input } from "@material-ui/core";
 import styles from "./input.module.css";
+import PropTypes from "prop-types";
 
-export function EmailInput(props) {
+export function EmailInput({ id, name, errors, onChange }) {
   return (
     <FormControl>
-      <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
-      <Input
-        type="email"
-        error={props.errors ? true : false}
-        id={props.id}
-        name={props.name}
-        onChange={e => props.onChange(e)}
-        aria-describedby="email-input-field"
-      />
-      <FormHelperText className={styles.FormHelperText}>{props.errors ? props.errors : ""}</FormHelperText>
+      <InputLabel htmlFor={id}>Email</InputLabel>
+      <Input type="email" error={errors ? true : false} id={id} name={name} onChange={e => onChange(e)} aria-describedby="email-input-field" />
+      <FormHelperText className={styles.FormHelperText}>{errors ? errors : ""}</FormHelperText>
     </FormControl>
   );
 }
+
+EmailInput.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  errors: PropTypes.object.isRequired,
+  name: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+};

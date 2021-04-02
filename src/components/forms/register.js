@@ -1,3 +1,4 @@
+import React from "react";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { FormGroup, Button } from "@material-ui/core";
@@ -9,7 +10,7 @@ import styles from "./form.module.css";
 import { BikelyApi } from "../../api/BikelyApi";
 import { useHistory } from "react-router-dom";
 
-export function RegisterForm(props) {
+export function RegisterForm() {
   const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
   const [inputErrors, setInputErrors] = useState({ email: "", password: "", username: "" });
   const [formError, setFormError] = useState("");
@@ -68,12 +69,11 @@ export function RegisterForm(props) {
   return (
     <form className="register" onSubmit={formik.handleSubmit}>
       <FormGroup className={styles.loginForm}>
-        <EmailInput errors={formik.errors.email} id="email" name="email" label="Email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
+        <EmailInput errors={formik.errors.email} id="email" name="email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
         <UsernameInput
           errors={formik.errors.username}
           id="username"
           name="username"
-          label="Username"
           value={formik.values.username}
           onChange={formik.handleChange}
         ></UsernameInput>
@@ -81,7 +81,6 @@ export function RegisterForm(props) {
           errors={formik.errors.password}
           id="password"
           name="password"
-          label="Password"
           value={formik.values.password}
           onChange={formik.handleChange}
         ></PasswordInput>
