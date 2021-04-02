@@ -5,7 +5,7 @@ module.exports = {
   env: {
     browser: true,
     jest: true,
-    cypress: true,
   },
+  globals: ["cy", "Cypress"],
   ignorePatterns: [".eslintrc.js"],
 };
