@@ -42,15 +42,19 @@ export function RegisterForm(props) {
 
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError("");
-    const register = await BikelyApi.register(values);
-    if (!register.error) {
-      const login = await BikelyApi.login(values);
-      if (login.error) {
+    const registerResponse = await BikelyApi.register(values);
+    if (!registerResponse.error) {
+      const loginResponse = await BikelyApi.login(values);
+      if (loginResponse.error) {
         setFormError("Something went wrong");
 
         setSubmitting(false);
       } else if (BikelyApi.userHasAuthenticated()) history.push("/");
-    } else setFormError("Something went wrong");
+    } else {
+      if (registerResponse.statusCode === 400 && Array.isArray(registerResponse.message)) setFormError(registerResponse.message[0]);
+      setFormError("Something went wrong");
+    }
+    setFormError("Something went wrong");
 
     setSubmitting(false);
   };
@@ -62,7 +66,7 @@ export function RegisterForm(props) {
   });
 
   return (
-    <form onSubmit={formik.handleSubmit}>
+    <form className="register" onSubmit={formik.handleSubmit}>
       <FormGroup className={styles.loginForm}>
         <EmailInput errors={formik.errors.email} id="email" name="email" label="Email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
         <UsernameInput

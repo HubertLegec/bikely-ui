@@ -1,0 +1,14 @@
+{
+  "correct": {
+    "email": "orginalAndNew@test.com",
+    "password": "password"
+  },
+  "invalidEmail": {
+    "email": "incorrect.com",
+    "password": "password"
+  },
+  "invalidPassword": {
+    "email": "orginalAndNew@test.com",
+    "password": "pass"
+  }
+}

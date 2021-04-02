@@ -1,0 +1,14 @@
+{
+  "correct": {
+    "statusCode": 200,
+    "body": {
+      "access_token": "token"
+    },
+    "ok": true
+  },
+  "unauthorized": {
+    "statusCode": 401,
+    "body": { "message": "Unauthorized", "status": "401" },
+    "ok": false
+  }
+}
