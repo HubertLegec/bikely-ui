@@ -1,3 +1,4 @@
+import React from "react";
 import { LoginForm } from "./login";
 import ReactDOM from "react-dom";
 import { act, waitFor, fireEvent } from "@testing-library/react";
@@ -6,9 +7,6 @@ import { BikelyApi } from "../../api/BikelyApi";
 jest.mock("../../api/BikelyApi");
 
 let container;
-const mockedSuccessfulResponse = {
-  access_token: "token",
-};
 
 const mockedUnsuccessfulResponse = {
   message: "error",
