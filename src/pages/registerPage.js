@@ -1,3 +1,4 @@
+import React from "react";
 import { RegisterForm } from "../components/forms/register";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";

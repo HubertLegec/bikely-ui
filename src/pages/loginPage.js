@@ -1,3 +1,4 @@
+import React from "react";
 import { LoginForm } from "../components/forms/login";
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
