@@ -1,0 +1,15 @@
+{
+  "correct": {
+    "body": {
+      "email": "orginalAndNew@test.com",
+      "password": "password",
+      "username": "username"
+    },
+    "ok": true
+  },
+  "badRequest": {
+    "statusCode": 400,
+    "body": { "message": "Bad request", "status": "400" },
+    "ok": false
+  }
+}

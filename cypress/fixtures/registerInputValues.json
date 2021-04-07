@@ -1,0 +1,22 @@
+{
+  "correct": {
+    "email": "orginalAndNew@test.com",
+    "password": "password",
+    "username": "username"
+  },
+  "invalidUsername": {
+    "email": "orginalAndNew@test.com",
+    "password": "password",
+    "username": "user"
+  },
+  "invalidPassword": {
+    "email": "orginalAndNew@test.com",
+    "password": "pass",
+    "username": "username"
+  },
+  "invalidEmail": {
+    "email": "orginalAndNewtest.com",
+    "password": "password",
+    "username": "username"
+  }
+}
