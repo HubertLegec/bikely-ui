@@ -139,7 +139,6 @@ const BikeTable = ({ bikes }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const rows = bikes.map((bike) => convertToBikeRecord(bike));
-  console.log(rows);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -181,6 +180,10 @@ const BikeTable = ({ bikes }) => {
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  BikeTable.propTypes = {
+    bikes: PropTypes.any
+  };
 
   return (
     <div className={classes.root}>

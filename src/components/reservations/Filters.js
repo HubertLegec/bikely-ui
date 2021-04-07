@@ -10,6 +10,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import { Box, Button, FormControlLabel, Switch } from "@material-ui/core";
+import PropTypes from "prop-types";
 
 const useStyles = makeStyles({
   root: {
@@ -19,35 +20,88 @@ const useStyles = makeStyles({
   },
 });
 
-const Filters = ({ bikeTypes, frameSizes, rentalPointLocations }) => {
+const Filters = ({
+  bikes,
+  bikeType,
+  onBikeTypeChange,
+  isElectric,
+  onIsElectricSwitchChange,
+  frameSize,
+  onFrameSizeChange,
+  rentFrom,
+  onPickupLocationChange,
+}) => {
+  const bikeTypes = new Set(
+    bikes.map((e) => {
+      return e.type;
+    })
+  );
+  const frameSizes = new Set(
+    bikes.map((e) => {
+      return e.frameSize;
+    })
+  );
+  const rentalPointLocations = new Set(
+    bikes.map((e) => {
+      return e.rentalPoint.location;
+    })
+  );
+
   const classes = useStyles();
-  const [bikeType, setBikeType] = useState("");
-  const [isElectric, setIsElectric] = useState(false);
-  const [frameSize, setframeSize] = useState("");
+  // const [bikeType, setBikeType] = useState("");
+  // const [isElectric, setIsElectric] = useState(false);
+  // const [frameSize, setframeSize] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [rentFrom, setRentFrom] = useState("");
+  // const [rentFrom, setRentFrom] = useState("");
   const [rentTo, setRentTo] = useState("");
 
-  const handleBikeTypeChange = (event) => {
-    setBikeType(event.target.value);
+  // const handleIsElectricSwitchChange = (event) => {
+  //   setIsElectric(event.target.checked);
+  //   console.log(event.target.checked)
+  // };
+
+  // const handleFrameSizeChange = (event) => {
+  //   setframeSize(event.target.value);
+  // };
+  // const handlePickupLocationChange = (event) => {
+  //   setRentFrom(event.target.value);
+  // };
+  const handleReturnLocationChange = (event) => {
+    setRentTo(event.target.value);
   };
-  const handleIsElectricSwitchChange = (event) => {
-    setIsElectric(event.target.checked);
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
   };
-  const handleFrameSizeChange = (event) => {
-    setframeSize(event.target.value);
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
   };
 
   function setFrameSizePickListElement(frameSize) {
-    return (<MenuItem value={frameSize}>{frameSize}</MenuItem>);
+    return <MenuItem value={frameSize}>{frameSize}</MenuItem>;
   }
   function setBikeTypePickListElement(type) {
-    return (<MenuItem value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</MenuItem>);
+    return (
+      <MenuItem value={type}>
+        {type.charAt(0).toUpperCase() + type.slice(1)}
+      </MenuItem>
+    );
   }
 
   function setRentalPointLocationPickListElement(type) {
-    return (<MenuItem value={type}>{type}</MenuItem>);
+    return <MenuItem value={type}>{type}</MenuItem>;
+  }
+
+  Filters.propTypes = {
+    bikes: PropTypes.any,
+    bikeType: PropTypes.string,
+    onBikeTypeChange: PropTypes.any,
+    isElectric: PropTypes.any,
+    onIsElectricSwitchChange: PropTypes.any,
+    frameSize: PropTypes.any,
+    onFrameSizeChange: PropTypes.any,
+    rentFrom: PropTypes.any,
+    onPickupLocationChange: PropTypes.any,
   }
 
   return (
@@ -58,7 +112,7 @@ const Filters = ({ bikeTypes, frameSizes, rentalPointLocations }) => {
           labelId="bike-type-select"
           id="bike-type-select"
           value={bikeType}
-          onChange={handleBikeTypeChange}
+          onChange={onBikeTypeChange}
         >
           {[...bikeTypes].map((type) => setBikeTypePickListElement(type))}
         </Select>
@@ -67,7 +121,7 @@ const Filters = ({ bikeTypes, frameSizes, rentalPointLocations }) => {
         control={
           <Switch
             checked={isElectric}
-            onChange={handleIsElectricSwitchChange}
+            onChange={onIsElectricSwitchChange}
             name="isElectric"
           />
         }
@@ -80,7 +134,7 @@ const Filters = ({ bikeTypes, frameSizes, rentalPointLocations }) => {
           labelId="frame-size-select"
           id="frame-size-select"
           value={frameSize}
-          onChange={handleFrameSizeChange}
+          onChange={onFrameSizeChange}
         >
           {[...frameSizes].map((size) => setFrameSizePickListElement(size))}
         </Select>
@@ -91,11 +145,11 @@ const Filters = ({ bikeTypes, frameSizes, rentalPointLocations }) => {
           labelId="rent-from-select"
           id="rent-from-select"
           value={rentFrom}
-          onChange={(event) => {
-            setRentFrom(event.target.value);
-          }}
+          onChange={onPickupLocationChange}
         >
-          {[...rentalPointLocations].map((location) => setRentalPointLocationPickListElement(location))}
+          {[...rentalPointLocations].map((location) =>
+            setRentalPointLocationPickListElement(location)
+          )}
         </Select>
       </FormControl>
       <FormControl>
@@ -104,28 +158,24 @@ const Filters = ({ bikeTypes, frameSizes, rentalPointLocations }) => {
           labelId="rent-to-select"
           id="rent-to-select"
           value={rentTo}
-          onChange={(event) => {
-            setRentTo(event.target.value);
-          }}
+          onChange={handleReturnLocationChange}
         >
-          {[...rentalPointLocations].map((location) => setRentalPointLocationPickListElement(location))}
+          {[...rentalPointLocations].map((location) =>
+            setRentalPointLocationPickListElement(location)
+          )}
         </Select>
       </FormControl>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <DatePicker
           label="Reservation start date"
           value={startDate}
-          onChange={(newValue) => {
-            setStartDate(newValue);
-          }}
+          onChange={handleStartDateChange}
           renderInput={(params) => <TextField {...params} />}
         />
         <DatePicker
           label="Reservation end date"
           value={endDate}
-          onChange={(newValue) => {
-            setEndDate(newValue);
-          }}
+          onChange={handleEndDateChange}
           renderInput={(params) => <TextField {...params} />}
         />
       </LocalizationProvider>
