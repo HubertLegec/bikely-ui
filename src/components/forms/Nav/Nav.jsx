@@ -1,11 +1,12 @@
-import React from "react";
-import { AppBar, Button, IconButton, Toolbar } from "@material-ui/core";
-import { Link } from "react-router-dom";
-export function Nav() {
+import React from 'react';
+import { AppBar, Button, IconButton, Toolbar } from '@material-ui/core';
+import { Link } from 'react-router-dom';
+
+export const Nav = () => {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <IconButton edge="start"></IconButton>
+        <IconButton edge="start" />
         <Link to="/login">
           <Button>Login</Button>
         </Link>
@@ -15,4 +16,4 @@ export function Nav() {
       </Toolbar>
     </AppBar>
   );
-}
+};

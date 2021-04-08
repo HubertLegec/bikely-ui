@@ -1,21 +1,20 @@
-import React from "react";
-import { useFormik } from "formik";
-import { useState } from "react";
-import { EmailInput } from "./inputs/email";
-import { PasswordInput } from "./inputs/password";
-import { FormGroup, Button } from "@material-ui/core";
-import { validateEmail, validatePassword } from "./validation";
-import styles from "./form.module.css";
-import { BikelyApi } from "../../api/BikelyApi";
-import { useHistory } from "react-router-dom";
+import React, { useState } from 'react';
+import { useFormik } from 'formik';
+import { FormGroup, Button } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
-export function LoginForm() {
-  const [inputValues, setInputValues] = useState({ email: "", password: "" });
-  const [inputErrors, setInputErrors] = useState({ email: "", password: "" });
-  const [formError, setFormError] = useState("");
+import { EmailInput, PasswordInput } from '../inputs';
+import { validateEmail, validatePassword } from '../../../helpers/validation';
+import styles from '../form.module.css';
+import { BikelyApi } from '../../../api/BikelyApi';
+
+export const LoginForm = () => {
+  const [inputValues, setInputValues] = useState({ email: '', password: '' });
+  const [inputErrors, setInputErrors] = useState({ email: '', password: '' });
+  const [formError, setFormError] = useState('');
   const history = useHistory();
 
-  const validate = values => {
+  const validate = (values) => {
     const errors = inputErrors;
     let isAllValid = true;
 
@@ -34,22 +33,23 @@ export function LoginForm() {
 
     setInputErrors(errors);
     setInputValues(values);
+
     return isAllValid ? null : errors;
   };
 
   const onSubmit = async (values, { setSubmitting }) => {
-    setFormError("");
+    setFormError('');
     const result = await BikelyApi.login(values);
     if (result.error) {
-      setFormError("Invalid credentials");
+      setFormError('Invalid credentials');
       setSubmitting(false);
     } else if (BikelyApi.userHasAuthenticated()) {
-      history.push("/");
+      history.push('/');
     }
   };
 
   const formik = useFormik({
-    initialValues: { email: "", password: "" },
+    initialValues: { email: '', password: '' },
     validate,
     onSubmit,
   });
@@ -57,14 +57,20 @@ export function LoginForm() {
   return (
     <form className="login" onSubmit={formik.handleSubmit}>
       <FormGroup className={styles.loginForm}>
-        <EmailInput errors={formik.errors.email} id="email" name="email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
+        <EmailInput
+          errors={formik.errors.email}
+          id="email"
+          name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+        />
         <PasswordInput
           errors={formik.errors.password}
           id="password"
           name="password"
           value={formik.values.password}
           onChange={formik.handleChange}
-        ></PasswordInput>
+        />
         <div id="formError" className={styles.formError}>
           {formError}
         </div>
@@ -74,4 +80,4 @@ export function LoginForm() {
       </FormGroup>
     </form>
   );
-}
+};

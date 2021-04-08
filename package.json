@@ -7,7 +7,9 @@
     "@material-ui/icons": "^4.11.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
+    "eslint-config-prettier": "^8.1.0",
     "formik": "^2.2.6",
+    "prettier": "^2.2.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
@@ -21,7 +23,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "cypress:open": "cypress open",
-    "lint": "eslint"
+    "lint": "eslint",
+    "lint:fix": "eslint --fix ./src/**/*.{js,jsx,md}",
+    "prettier:fix": "prettier --write ./src"
   },
   "eslintConfig": {
     "extends": [
@@ -45,6 +49,10 @@
     "@testing-library/user-event": "^13.0.16",
     "babel-eslint": "^10.1.0",
     "eslint-plugin-cypress": "^2.11.2",
-    "eslint-plugin-react": "^7.23.1"
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jest-dom": "^3.7.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-react": "^7.23.1",
+    "prop-types": "^15.7.2"
   }
 }
