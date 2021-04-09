@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Nav } from "./components/nav";
 import { LoginPage } from "./pages/loginPage";
 import { RegisterPage } from "./pages/registerPage";
-import Reservations from "./components/reservations";
+// import Reservations from "./components/reservations";
+import HorizontalLinearStepper from "./components/Stepper";
 
 const App = () => {
 
@@ -17,8 +18,8 @@ const App = () => {
         <Route path="/register">
           <RegisterPage></RegisterPage>
         </Route>
-          <Route path="/reservations">
-        <Reservations />
+          <Route path="/stepper">
+        <HorizontalLinearStepper />
         </Route>
       </Switch>
     </Router>

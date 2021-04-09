@@ -60,13 +60,8 @@ const Reservations = () => {
     return bikes.filter((bike) => {
       console.log(bike.rentalPoint.location)
 
-
       for (let key in filter) {
-
         if (bike[key] !== filter[key] && filter[key] !== "") {
-
-
-
           return false;
         }
       }
