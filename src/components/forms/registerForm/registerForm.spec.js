@@ -6,7 +6,7 @@ import { BikelyApi } from '../../../api/BikelyApi';
 
 import { RegisterForm } from './RegisterForm';
 
-jest.mock('../../api/BikelyApi');
+jest.mock('../../../api/BikelyApi');
 
 let container;
 

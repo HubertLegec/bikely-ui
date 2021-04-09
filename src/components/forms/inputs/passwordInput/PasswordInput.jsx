@@ -23,7 +23,7 @@ export const PasswordInput = ({ id, errors, name, onChange }) => {
 
 PasswordInput.propTypes = {
   onChange: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
+  errors: PropTypes.string,
   name: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };

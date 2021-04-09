@@ -16,7 +16,7 @@ export const UsernameInput = ({ id, name, errors, onChange }) => {
 
 UsernameInput.propTypes = {
   onChange: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
+  errors: PropTypes.string,
   name: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };

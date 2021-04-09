@@ -23,7 +23,7 @@ export const EmailInput = ({ id, name, errors, onChange }) => {
 
 EmailInput.propTypes = {
   onChange: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
+  errors: PropTypes.string,
   name: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };
