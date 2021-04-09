@@ -1,22 +1,20 @@
-import React from "react";
-import { useFormik } from "formik";
-import { useState } from "react";
-import { FormGroup, Button } from "@material-ui/core";
-import { EmailInput } from "./inputs/email";
-import { PasswordInput } from "./inputs/password";
-import { UsernameInput } from "./inputs/username";
-import { validateEmail, validatePassword, validateUsername } from "./validation";
-import styles from "./form.module.css";
-import { BikelyApi } from "../../api/BikelyApi";
-import { useHistory } from "react-router-dom";
+import React, { useState } from 'react';
+import { useFormik } from 'formik';
+import { FormGroup, Button } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
-export function RegisterForm() {
-  const [inputValues, setInputValues] = useState({ email: "", password: "", username: "" });
-  const [inputErrors, setInputErrors] = useState({ email: "", password: "", username: "" });
-  const [formError, setFormError] = useState("");
+import { EmailInput, PasswordInput, UsernameInput } from '../inputs';
+import { validateEmail, validatePassword, validateUsername } from '../../../helpers/validation';
+import styles from '../form.module.css';
+import { BikelyApi } from '../../../api/BikelyApi';
+
+export const RegisterForm = () => {
+  const [inputValues, setInputValues] = useState({ email: '', password: '', username: '' });
+  const [inputErrors, setInputErrors] = useState({ email: '', password: '', username: '' });
+  const [formError, setFormError] = useState('');
   const history = useHistory();
 
-  const validate = values => {
+  const validate = (values) => {
     const errors = inputErrors;
     let isAllValid = true;
 
@@ -42,26 +40,27 @@ export function RegisterForm() {
   };
 
   const onSubmit = async (values, { setSubmitting }) => {
-    setFormError("");
+    setFormError('');
     const registerResponse = await BikelyApi.register(values);
     if (!registerResponse.error) {
       const loginResponse = await BikelyApi.login(values);
       if (loginResponse.error) {
-        setFormError("Something went wrong");
+        setFormError('Something went wrong');
 
         setSubmitting(false);
-      } else if (BikelyApi.userHasAuthenticated()) history.push("/");
+      } else if (BikelyApi.userHasAuthenticated()) history.push('/');
     } else {
-      if (registerResponse.statusCode === 400 && Array.isArray(registerResponse.message)) setFormError(registerResponse.message[0]);
-      setFormError("Something went wrong");
+      if (registerResponse.statusCode === 400 && Array.isArray(registerResponse.message))
+        setFormError(registerResponse.message[0]);
+      setFormError('Something went wrong');
     }
-    setFormError("Something went wrong");
+    setFormError('Something went wrong');
 
     setSubmitting(false);
   };
 
   const formik = useFormik({
-    initialValues: { email: "", password: "", username: "" },
+    initialValues: { email: '', password: '', username: '' },
     validate,
     onSubmit,
   });
@@ -69,21 +68,27 @@ export function RegisterForm() {
   return (
     <form className="register" onSubmit={formik.handleSubmit}>
       <FormGroup className={styles.loginForm}>
-        <EmailInput errors={formik.errors.email} id="email" name="email" value={formik.values.email} onChange={formik.handleChange}></EmailInput>
+        <EmailInput
+          errors={formik.errors.email}
+          id="email"
+          name="email"
+          value={formik.values.email}
+          onChange={formik.handleChange}
+        />
         <UsernameInput
           errors={formik.errors.username}
           id="username"
           name="username"
           value={formik.values.username}
           onChange={formik.handleChange}
-        ></UsernameInput>
+        />
         <PasswordInput
           errors={formik.errors.password}
           id="password"
           name="password"
           value={formik.values.password}
           onChange={formik.handleChange}
-        ></PasswordInput>
+        />
         <div id="formError" className={styles.formError}>
           {formError}
         </div>
@@ -93,4 +98,4 @@ export function RegisterForm() {
       </FormGroup>
     </form>
   );
-}
+};
