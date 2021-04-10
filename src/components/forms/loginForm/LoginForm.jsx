@@ -5,14 +5,16 @@ import { useHistory } from 'react-router-dom';
 
 import { EmailInput, PasswordInput } from '../inputs';
 import { validateEmail, validatePassword } from '../../../helpers/validation';
-import styles from '../form.module.css';
 import { BikelyApi } from '../../../api/BikelyApi';
+
+import { useStyles } from './LoginForm.styles';
 
 export const LoginForm = () => {
   const [inputValues, setInputValues] = useState({ email: '', password: '' });
   const [inputErrors, setInputErrors] = useState({ email: '', password: '' });
   const [formError, setFormError] = useState('');
   const history = useHistory();
+  const classes = useStyles();
 
   const validate = (values) => {
     const errors = inputErrors;
@@ -56,7 +58,7 @@ export const LoginForm = () => {
 
   return (
     <form className="login" onSubmit={formik.handleSubmit}>
-      <FormGroup className={styles.loginForm}>
+      <FormGroup className={classes.loginForm}>
         <EmailInput
           errors={formik.errors.email}
           id="email"
@@ -71,11 +73,11 @@ export const LoginForm = () => {
           value={formik.values.password}
           onChange={formik.handleChange}
         />
-        <div id="formError" className={styles.formError}>
+        <div id="formError" className={classes.formError}>
           {formError}
         </div>
-        <Button className={styles.submitButton} type="submit" disabled={formik.isSubmitting}>
-          Submit
+        <Button variant="outlined" className={classes.submitButton} type="submit" disabled={formik.isSubmitting}>
+          Login
         </Button>
       </FormGroup>
     </form>

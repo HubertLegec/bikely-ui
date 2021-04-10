@@ -6,7 +6,7 @@ import styles from '../input.module.css';
 
 export const EmailInput = ({ id, name, errors, onChange }) => {
   return (
-    <FormControl>
+    <FormControl fullWidth>
       <InputLabel htmlFor={id}>Email</InputLabel>
       <Input
         type="email"

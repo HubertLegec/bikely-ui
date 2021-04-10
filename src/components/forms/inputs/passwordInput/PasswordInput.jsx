@@ -6,7 +6,7 @@ import styles from '../input.module.css';
 
 export const PasswordInput = ({ id, errors, name, onChange }) => {
   return (
-    <FormControl>
+    <FormControl fullWidth>
       <InputLabel htmlFor={id}>Password</InputLabel>
       <Input
         type="password"
