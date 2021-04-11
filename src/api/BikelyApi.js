@@ -1,5 +1,5 @@
 export class BikelyApi {
-  static apiUrl = 'http://localhost:8080';
+  static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
   static _accessToken = '';
   static _profile;
 
@@ -50,11 +50,12 @@ export class BikelyApi {
       const response = await fetch(BikelyApi.apiUrl + '/users/me', {
         method: 'GET',
         mode: 'cors',
-        credentials: 'include',
+        credentials: 'omit',
         headers: {
           'Content-Type': 'application/json',
           //prettier-ignore
           'Authorization': `Bearer ${BikelyApi.accessToken}`,
+          'Access-Control-Allow-Credentials': true,
         },
       });
       console.log(response);

@@ -22,7 +22,7 @@ export const PrivateRoute = ({ children, roles, ...rest }) => {
           return <Redirect to={{ pathname: '/login' }} />;
         }
 
-        if (!roles.includes(userProfile.role)) {
+        if (!userProfile || !roles.includes(userProfile.role)) {
           return '';
         }
 

@@ -23,7 +23,7 @@ export const ReservationsTable = () => {
   useEffect(() => {
     (async function () {
       const reservations = await BikelyApi.getReservations({ userId: true });
-      if (reservations) setReservations(sortReservations(reservations));
+      if (reservations && reservations.length > 0) setReservations(sortReservations(reservations));
     })();
   }, []);
 
