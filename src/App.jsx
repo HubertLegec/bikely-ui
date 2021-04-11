@@ -6,21 +6,26 @@ import { ThemeProvider } from '@material-ui/core';
 import { Nav } from './components/forms';
 import { LoginPage, RegisterPage } from './pages';
 import { theme } from './theme/theme';
+import { useStyles } from './App.styles';
 
 export const App = () => {
+  const classes = useStyles();
+
   return (
     <ThemeProvider theme={theme}>
-      <Router>
-        <Nav />
-        <Switch>
-          <Route path="/login">
-            <LoginPage />
-          </Route>
-          <Route path="/register">
-            <RegisterPage />
-          </Route>
-        </Switch>
-      </Router>
+      <div className={classes.container}>
+        <Router>
+          <Nav />
+          <Switch>
+            <Route path="/login">
+              <LoginPage />
+            </Route>
+            <Route path="/register">
+              <RegisterPage />
+            </Route>
+          </Switch>
+        </Router>
+      </div>
     </ThemeProvider>
   );
 };
