@@ -6,16 +6,20 @@ import { useHistory } from 'react-router-dom';
 import { LoginForm } from '../../components/forms';
 import { validateEmail, validatePassword } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
+import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
 
 import { useStyles } from './LoginPage.styles';
+
+const initialValues = { email: '', password: '' };
 
 export const LoginPage = () => {
   const classes = useStyles();
   const history = useHistory();
 
-  const [inputValues, setInputValues] = useState({ email: '', password: '' });
-  const [inputErrors, setInputErrors] = useState({ email: '', password: '' });
+  const [inputValues, setInputValues] = useState(initialValues);
+  const [inputErrors, setInputErrors] = useState(initialValues);
   const [formError, setFormError] = useState('');
+  const [loading, setLoading] = React.useState(false);
 
   const validate = (values) => {
     const errors = inputErrors;
@@ -42,26 +46,35 @@ export const LoginPage = () => {
 
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError('');
+    if (!loading) setLoading(() => true);
     const result = await BikelyApi.login(values);
     if (result.error) {
-      setFormError('Invalid credentials');
+      if (result.statusCode === 401) {
+        setFormError('Invalid credentials');
+      } else {
+        setFormError('Something went wrong');
+        console.table(result);
+      }
       setSubmitting(false);
     } else if (BikelyApi.userHasAuthenticated()) {
       history.push('/');
     }
+    setLoading(() => false);
   };
 
   const formik = useFormik({
-    initialValues: { email: '', password: '' },
+    initialValues,
     validate,
     onSubmit,
   });
 
   return (
     <div className={classes.container}>
-      <Paper className={classes.paper}>
-        <LoginForm formik={formik} formError={formError} />
-      </Paper>
+      <LoginRegisterFormWrapper>
+        <Paper className={classes.paper}>
+          <LoginForm formik={formik} formError={formError} loading={loading} />
+        </Paper>
+      </LoginRegisterFormWrapper>
     </div>
   );
 };

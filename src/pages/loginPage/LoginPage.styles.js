@@ -5,7 +5,7 @@ export const useStyles = makeStyles((theme) => ({
     minHeight: 'calc(100vh - 64px)',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
   paper: {

@@ -6,15 +6,20 @@ import { useHistory } from 'react-router-dom';
 import { RegisterForm } from '../../components/forms';
 import { validateEmail, validatePassword, validateUsername } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
+import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
 
 import { useStyles } from './RegisterPage.styles';
 
+const initialValues = { email: '', password: '', username: '' };
+
 export const RegisterPage = () => {
   const classes = useStyles();
-  const [inputValues, setInputValues] = useState({ email: '', password: '', username: '' });
-  const [inputErrors, setInputErrors] = useState({ email: '', password: '', username: '' });
-  const [formError, setFormError] = useState('');
   const history = useHistory();
+
+  const [inputValues, setInputValues] = useState(initialValues);
+  const [inputErrors, setInputErrors] = useState(initialValues);
+  const [formError, setFormError] = useState('');
+  const [loading, setLoading] = React.useState(false);
 
   const validate = (values) => {
     const errors = inputErrors;
@@ -43,39 +48,38 @@ export const RegisterPage = () => {
 
   const onSubmit = async (values, { setSubmitting }) => {
     setFormError('');
+    if (!loading) setLoading(() => true);
     const registerResponse = await BikelyApi.register(values);
     if (!registerResponse.error) {
       const loginResponse = await BikelyApi.login(values);
       if (loginResponse.error) {
         setFormError('Something went wrong');
-
         setSubmitting(false);
-      } else if (BikelyApi.userHasAuthenticated()) history.push('/');
+      } else if (BikelyApi.userHasAuthenticated()) history.push('/login');
     } else {
       if (registerResponse.statusCode === 400 && Array.isArray(registerResponse.message))
         setFormError(registerResponse.message[0]);
       setFormError('Something went wrong');
     }
     setFormError('Something went wrong');
-
+    console.table(registerResponse);
     setSubmitting(false);
+    setLoading(() => false);
   };
 
   const formik = useFormik({
-    initialValues: { email: '', password: '', username: '' },
+    initialValues,
     validate,
     onSubmit,
   });
 
   return (
-    // <Grid alignItems="center" justify="center" style={{ minHeight: '100vh' }} container spacing={0}>
-    //   <Grid item xs={4}>
     <div className={classes.container}>
-      <Paper className={classes.paper}>
-        <RegisterForm formik={formik} formError={formError} />
-      </Paper>
+      <LoginRegisterFormWrapper>
+        <Paper className={classes.paper}>
+          <RegisterForm formik={formik} formError={formError} loading={loading} />
+        </Paper>
+      </LoginRegisterFormWrapper>
     </div>
-    //   </Grid>
-    // </Grid>
   );
 };
