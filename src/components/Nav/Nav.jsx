@@ -13,6 +13,9 @@ export const Nav = () => {
         <Link to="/register">
           <Button>Register</Button>
         </Link>
+        <Link to="/reservations">
+          <Button>Reservations</Button>
+        </Link>
       </Toolbar>
     </AppBar>
   );
