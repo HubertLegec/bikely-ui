@@ -9,7 +9,7 @@ import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
 
 export const App = () => {
-  const classes = useStyles();
+  const classes = useStyles(theme);
 
   return (
     <ThemeProvider theme={theme}>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paper } from '@material-ui/core';
+import { Paper, useTheme } from '@material-ui/core';
 import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
 
@@ -13,7 +13,8 @@ import { useStyles } from './RegisterPage.styles';
 const initialValues = { email: '', password: '', username: '' };
 
 export const RegisterPage = () => {
-  const classes = useStyles();
+  const theme = useTheme();
+  const classes = useStyles(theme);
   const history = useHistory();
 
   const [inputValues, setInputValues] = useState(initialValues);

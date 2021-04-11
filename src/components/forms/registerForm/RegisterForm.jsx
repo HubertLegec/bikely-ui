@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, Button, Typography, Box, CircularProgress } from '@material-ui/core';
+import { FormGroup, Button, Typography, Box, CircularProgress, useTheme } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 import { EmailInput, PasswordInput, UsernameInput } from '../inputs';
@@ -7,7 +7,8 @@ import { EmailInput, PasswordInput, UsernameInput } from '../inputs';
 import { useStyles } from './RegisterForm.styles';
 
 export const RegisterForm = ({ formik, formError, loading }) => {
-  const classes = useStyles();
+  const theme = useTheme();
+  const classes = useStyles(theme);
 
   const { handleSubmit, errors, values, handleChange, isSubmitting } = formik;
   const { password, email, username } = values;

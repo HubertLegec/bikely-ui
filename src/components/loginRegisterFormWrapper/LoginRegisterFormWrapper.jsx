@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
-// import logotype from '../../assets/bikely_logo_1.png';
+import { useTheme } from '@material-ui/core';
 
 import { useStyles } from './LoginRegisterFormWrapper.styles';
 
 export const LoginRegisterFormWrapper = ({ children }) => {
-  const classes = useStyles();
+  const theme = useTheme();
+  const classes = useStyles(theme);
 
   return (
     <>
