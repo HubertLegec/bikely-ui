@@ -1,5 +1,13 @@
 {
-  "extends": ["plugin:react/recommended", "eslint:recommended", "plugin:cypress/recommended"],
+  "extends": [
+    "plugin:react/recommended",
+    "eslint:recommended",
+    "plugin:cypress/recommended",
+    "react-app",
+    "plugin:prettier/recommended",
+    "plugin:jest-dom/recommended",
+    "plugin:testing-library/recommended"
+  ],
   "parser": "babel-eslint",
   "root": true,
   "env": {
@@ -8,6 +16,42 @@
     "cypress/globals": true,
     "es6": true
   },
-  "plugins": ["cypress"],
-  "ignorePatterns": [".eslintrc.js"]
+  "plugins": ["cypress", "prettier"],
+  "ignorePatterns": [".eslintrc.js"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "singleQuote": true,
+        "trailingComma": "all",
+        "proseWrap": "always",
+        "endOfLine": "auto"
+      }
+    ],
+    "no-console": "off",
+    "react/jsx-props-no-spreading": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "import/no-default-export": "error",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          ["external", "builtin"],
+          ["parent", "internal"],
+          ["index", "sibling"]
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "padding-line-between-statements": [
+      "error",
+      {
+        "blankLine": "always",
+        "prev": "*",
+        "next": "return"
+      }
+    ]
+  }
 }

@@ -1,23 +1,20 @@
 import React from "react";
-import { AppBar, IconButton, Toolbar } from "@material-ui/core";
+import { AppBar, IconButton, Toolbar, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Button from '@material-ui/core/Button';
 
-export function Nav() {
+export const Nav = () => {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <IconButton edge="start"></IconButton>
+        <IconButton edge="start" />
         <Link to="/login">
           <Button>Login</Button>
         </Link>
         <Link to="/register">
           <Button>Register</Button>
         </Link>
-
           <Button color="secondary" href="/reservations">Create Reservation</Button>
-
       </Toolbar>
     </AppBar>
   );
-}
+};
