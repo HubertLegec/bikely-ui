@@ -43,7 +43,7 @@ function stableSort(array, comparator) {
 const headCells = [
   { id: "type", numeric: false, disablePadding: true, label: "Bike type" },
   { id: "isElectric", numeric: false, disablePadding: false, label: "Has electric engine" },
-  { id: "size", numeric: true, disablePadding: false, label: "Frame Size" },
+  { id: "size", numeric: true, disablePadding: false, label: "Frame size" },
   { id: "pickupLocation", numeric: false, disablePadding: false, label: "Pickup location" },
 ];
 
@@ -89,6 +89,16 @@ function EnhancedTableHead(props) {
   );
 }
 
+function convertToBikeRecord(bike) {
+  const id = bike.bikeId;
+  const type = bike.type;
+  const isElectric = bike.isElectric ? "Yes" : "No";
+  const size = bike.frameSize;
+  const location = bike.rentalPoint.location;
+  const locationId = bike.rentalPoint.id;
+  return { id, type, isElectric, size, location, locationId };
+}
+
 EnhancedTableHead.propTypes = {
   classes: PropTypes.object.isRequired,
   onRequestSort: PropTypes.func.isRequired,
@@ -120,20 +130,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function convertToBikeRecord(bike) {
-  const id = bike.bikeId;
-  const type = bike.type;
-  const isElectric = bike.isElectric ? "Yes" : "No";
-  const size = bike.frameSize;
-  const location = bike.rentalPoint.location;
-  const locationId = bike.rentalPoint.id;
-  return { id, type, isElectric, size, location, locationId };
-}
-
-const BikeTable = ({ bikes }) => {
+const BikeTable = ({ bikes, onBikeSelection }) => {
   const classes = useStyles();
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("calories");
+  const [orderBy, setOrderBy] = useState("");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -146,25 +146,25 @@ const BikeTable = ({ bikes }) => {
     setOrderBy(property);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
+  const handleClick = (event, bikeId) => {
+    const selectedIndex = selected.indexOf(bikeId);
+    let selectedBikeIds = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      selectedBikeIds = selectedBikeIds.concat(selected, bikeId);
     } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
+      selectedBikeIds = selectedBikeIds.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
+      selectedBikeIds = selectedBikeIds.concat(selected.slice(0, -1));
     } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
+      selectedBikeIds = selectedBikeIds.concat(
         selected.slice(0, selectedIndex),
         selected.slice(selectedIndex + 1)
       );
     }
 
-    setSelected(newSelected);
-    console.log(selected);
+    setSelected(selectedBikeIds);
+    onBikeSelection(selectedBikeIds);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -182,7 +182,8 @@ const BikeTable = ({ bikes }) => {
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   BikeTable.propTypes = {
-    bikes: PropTypes.any
+    bikes: PropTypes.any,
+    onBikeSelection: PropTypes.func
   };
 
   return (
@@ -206,7 +207,6 @@ const BikeTable = ({ bikes }) => {
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
-
                   return (
                     <TableRow
                       hover
@@ -252,8 +252,8 @@ const BikeTable = ({ bikes }) => {
           count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
     </div>

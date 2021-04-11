@@ -5,61 +5,39 @@ import Filters from "./Filters";
 import DateFnsAdapter from "@material-ui/lab/AdapterDateFns";
 import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
 import CircularProgress from "@material-ui/core/CircularProgress";
-// import BikeProvider, { BikeContext } from "./BikeContext";
+import { BikelyApi } from "../../api/BikelyApi";
 
 const Reservations = () => {
   const [bikes, setBikes] = useState([]);
+  const [formValues, setFormValues] = useState({
+    selectedBikes: [],
+    selectedBikeType: "",
+    isElectric: "",
+    selectedFrameSize: "",
+    rentFrom: "",
+    rentTo: "",
+    startDate: null,
+    endDate: null,
+  });
   const [isLoading, setIsLoading] = useState(true);
 
-  const [bikeType, setBikeType] = useState("");
-  const [isElectric, setIsElectric] = useState("");
-  const [frameSize, setframeSize] = useState("");
-  // const [startDate, setStartDate] = useState(null);
-  // const [endDate, setEndDate] = useState(null);
-  const [rentFrom, setRentFrom] = useState("");
-  // const [rentTo, setRentTo] = useState("");
-
   useEffect(() => {
-    const fetchItems = async () => {
-      const data = await fetch("http://localhost:8080/bikes").then((res) =>
-        res.json()
-      );
-
-      console.log(data);
-      setBikes(data);
-    };
-    fetchItems();
+    BikelyApi.getBikes(formValues.startDate).then((bikes) => {
+      setBikes(bikes);
+    });
     setIsLoading(false);
-  }, []);
+  }, [formValues.startDate]);
 
-  const handleBikeTypeChange = (event) => {
-    setBikeType(event.target.value);
-  };
-
-  const handleIsElectricSwitchChange = (event) => {
-    setIsElectric(event.target.checked);
-  };
-
-  const handleFrameSizeChange = (event) => {
-    console.log(event.target.value);
-    setframeSize(event.target.value);
-  };
-
-  const handlePickupLocationChange = (event) => {
-    setRentFrom(event.target.value);
-  };
-
-  function search(bikes) {
+  const filterTable = (bikes) => {
     const filter = {
-      type: bikeType,
-      isElectric: isElectric,
-      frameSize: frameSize,
-      location: rentFrom
+      type: formValues.selectedBikeType,
+      isElectric: formValues.isElectric,
+      frameSize: formValues.selectedFrameSize,
+      location: formValues.rentFrom,
     };
 
     return bikes.filter((bike) => {
-      console.log(bike.rentalPoint.location)
-
+      bike.location = bike.rentalPoint.id;
       for (let key in filter) {
         if (bike[key] !== filter[key] && filter[key] !== "") {
           return false;
@@ -67,7 +45,61 @@ const Reservations = () => {
       }
       return true;
     });
-  }
+  };
+
+  const handleBikeTypeChange = (event) => {
+    setFormValues((prev) => ({
+      ...prev,
+      selectedBikeType: event.target.value,
+    }));
+  };
+
+  const handleIsElectricSwitchChange = (event) => {
+    setFormValues((prev) => ({ ...prev, isElectric: event.target.checked }));
+  };
+
+  const handleFrameSizeChange = (event) => {
+    setFormValues((prev) => ({
+      ...prev,
+      selectedFrameSize: event.target.value,
+    }));
+  };
+
+  const handlePickupLocationChange = (event) => {
+    setFormValues((prev) => ({ ...prev, rentFrom: event.target.value }));
+  };
+
+  const handleReturnLocationChange = (event) => {
+    setFormValues((prev) => ({ ...prev, rentTo: event.target.value }));
+  };
+
+  const handleStartDateChange = (date) => {
+    setFormValues((prev) => ({ ...prev, startDate: date }));
+  };
+
+  const handleEndDateChange = (date) => {
+    setFormValues((prev) => ({ ...prev, endDate: date }));
+  };
+
+  const handleBikeSelection = (bikeIds) => {
+    setFormValues((prev) => ({ ...prev, selectedBikes: bikeIds }));
+  };
+
+  const handleCreateReservationRequest = () => {
+    const reservations = [];
+    formValues.selectedBikes.forEach((bikeId) => {
+      const reservation = {
+        bike_id: bikeId,
+        plannedDateFrom: formValues.startDate,
+        plannedDateTo: formValues.endDate,
+        rentalPointFrom_id: bikes.find((bike) => bike.bikeId === bikeId)
+          .rentalPoint.id,
+        rentalPointTo_id: formValues.rentTo,
+      };
+      reservations.push(reservation);
+    });
+    reservations.forEach((res) => BikelyApi.postReservation(res));
+  };
 
   return isLoading ? (
     <CircularProgress />
@@ -78,20 +110,22 @@ const Reservations = () => {
           <LocalizationProvider dateAdapter={DateFnsAdapter}>
             <Filters
               bikes={bikes}
-              bikeType={bikeType}
+              formValues={formValues}
               onBikeTypeChange={handleBikeTypeChange}
-              isElectric={isElectric}
               onIsElectricSwitchChange={handleIsElectricSwitchChange}
-              frameSize={frameSize}
               onFrameSizeChange={handleFrameSizeChange}
-              rentFrom={rentFrom}
               onPickupLocationChange={handlePickupLocationChange}
+              onReturnLocationChange={handleReturnLocationChange}
+              onStartDateChange={handleStartDateChange}
+              onEndDateChange={handleEndDateChange}
+              createReservationRequest={handleCreateReservationRequest}
             />
           </LocalizationProvider>
         </Grid>
         <Grid item xs={9}>
           <BikeTable
-            bikes={search(bikes)}
+            bikes={filterTable(bikes)}
+            onBikeSelection={handleBikeSelection}
           />
         </Grid>
       </Grid>

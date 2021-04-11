@@ -15,7 +15,7 @@ export function Nav() {
           <Button>Register</Button>
         </Link>
 
-          <Button color="secondary" href="/stepper">stepper</Button>
+          <Button color="secondary" href="/reservations">Create Reservation</Button>
 
       </Toolbar>
     </AppBar>

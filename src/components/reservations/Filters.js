@@ -1,16 +1,19 @@
 import React, { useState } from "react";
-import TextField from "@material-ui/core/TextField";
-import AdapterDateFns from "@material-ui/lab/AdapterDateFns";
-import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
-import DatePicker from "@material-ui/lab/DatePicker";
-
 import { makeStyles } from "@material-ui/core/styles";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
-import { Box, Button, FormControlLabel, Switch } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  FormHelperText,
+  Switch,
+} from "@material-ui/core";
 import PropTypes from "prop-types";
+import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 const useStyles = makeStyles({
   root: {
@@ -22,60 +25,41 @@ const useStyles = makeStyles({
 
 const Filters = ({
   bikes,
-  bikeType,
+  formValues,
   onBikeTypeChange,
-  isElectric,
   onIsElectricSwitchChange,
-  frameSize,
   onFrameSizeChange,
-  rentFrom,
   onPickupLocationChange,
+  onReturnLocationChange,
+  onStartDateChange,
+  onEndDateChange,
+  createReservationRequest,
 }) => {
   const bikeTypes = new Set(
     bikes.map((e) => {
       return e.type;
     })
-  );
+  ).add("");
   const frameSizes = new Set(
     bikes.map((e) => {
       return e.frameSize;
     })
-  );
-  const rentalPointLocations = new Set(
-    bikes.map((e) => {
-      return e.rentalPoint.location;
-    })
-  );
+  ).add("");
+  const rentalPoints = new Set(
+    bikes
+      .map((e) => {
+        return e.rentalPoint;
+      })
+      .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)
+  ).add({ id: "", location: "" });
 
   const classes = useStyles();
-  // const [bikeType, setBikeType] = useState("");
-  // const [isElectric, setIsElectric] = useState(false);
-  // const [frameSize, setframeSize] = useState("");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  // const [rentFrom, setRentFrom] = useState("");
-  const [rentTo, setRentTo] = useState("");
-
-  // const handleIsElectricSwitchChange = (event) => {
-  //   setIsElectric(event.target.checked);
-  //   console.log(event.target.checked)
-  // };
-
-  // const handleFrameSizeChange = (event) => {
-  //   setframeSize(event.target.value);
-  // };
-  // const handlePickupLocationChange = (event) => {
-  //   setRentFrom(event.target.value);
-  // };
-  const handleReturnLocationChange = (event) => {
-    setRentTo(event.target.value);
-  };
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
+  const [inputErrors, setInputErrors] = useState({
+    rentTo: false,
+    startDate: false,
+    endDate: false,
+    selectedBikes: false,
+  });
 
   function setFrameSizePickListElement(frameSize) {
     return <MenuItem value={frameSize}>{frameSize}</MenuItem>;
@@ -88,21 +72,52 @@ const Filters = ({
     );
   }
 
-  function setRentalPointLocationPickListElement(type) {
-    return <MenuItem value={type}>{type}</MenuItem>;
+  function setRentalPointLocationPickListElement(rentalPoint) {
+    return <MenuItem value={rentalPoint.id}>{rentalPoint.location}</MenuItem>;
   }
 
   Filters.propTypes = {
     bikes: PropTypes.any,
-    bikeType: PropTypes.string,
-    onBikeTypeChange: PropTypes.any,
-    isElectric: PropTypes.any,
-    onIsElectricSwitchChange: PropTypes.any,
-    frameSize: PropTypes.any,
-    onFrameSizeChange: PropTypes.any,
-    rentFrom: PropTypes.any,
-    onPickupLocationChange: PropTypes.any,
-  }
+    formValues: PropTypes.object,
+    onBikeTypeChange: PropTypes.func,
+    onIsElectricSwitchChange: PropTypes.func,
+    onFrameSizeChange: PropTypes.func,
+    onPickupLocationChange: PropTypes.func,
+    onReturnLocationChange: PropTypes.func,
+    onStartDateChange: PropTypes.func,
+    onEndDateChange: PropTypes.func,
+    createReservationRequest: PropTypes.func,
+  };
+
+  const handleClick = () => {
+    if (validateForm()) {
+      createReservationRequest();
+    }
+  };
+
+  const validateForm = () => {
+    const errors = { ...inputErrors };
+    let allValid = true;
+
+    !formValues.rentTo ? (errors.rentTo = true) : (errors.rentTo = false);
+    !formValues.startDate
+      ? (errors.startDate = true)
+      : (errors.startDate = false);
+    !formValues.endDate ? (errors.endDate = true) : (errors.endDate = false);
+    !formValues.selectedBikes.length
+      ? (errors.selectedBikes = true)
+      : (errors.selectedBikes = false);
+
+    setInputErrors({ ...errors });
+
+    Object.values(errors).forEach((error) => {
+      if (error) {
+        allValid = false;
+      }
+    });
+
+    return allValid ? true : false;
+  };
 
   return (
     <Box className={classes.root}>
@@ -111,7 +126,7 @@ const Filters = ({
         <Select
           labelId="bike-type-select"
           id="bike-type-select"
-          value={bikeType}
+          value={formValues.selectedBikeType}
           onChange={onBikeTypeChange}
         >
           {[...bikeTypes].map((type) => setBikeTypePickListElement(type))}
@@ -120,7 +135,7 @@ const Filters = ({
       <FormControlLabel
         control={
           <Switch
-            checked={isElectric}
+            checked={formValues.isElectric}
             onChange={onIsElectricSwitchChange}
             name="isElectric"
           />
@@ -133,7 +148,7 @@ const Filters = ({
         <Select
           labelId="frame-size-select"
           id="frame-size-select"
-          value={frameSize}
+          value={formValues.selectedFrameSize}
           onChange={onFrameSizeChange}
         >
           {[...frameSizes].map((size) => setFrameSizePickListElement(size))}
@@ -144,44 +159,73 @@ const Filters = ({
         <Select
           labelId="rent-from-select"
           id="rent-from-select"
-          value={rentFrom}
+          value={formValues.rentFrom}
           onChange={onPickupLocationChange}
         >
-          {[...rentalPointLocations].map((location) =>
-            setRentalPointLocationPickListElement(location)
+          {[...rentalPoints].map((point) =>
+            setRentalPointLocationPickListElement(point)
           )}
         </Select>
       </FormControl>
-      <FormControl>
+      <FormControl required error={inputErrors.rentTo}>
         <InputLabel id="rent-to-select">Return Location</InputLabel>
         <Select
           labelId="rent-to-select"
           id="rent-to-select"
-          value={rentTo}
-          onChange={handleReturnLocationChange}
+          value={formValues.rentTo}
+          onChange={onReturnLocationChange}
         >
-          {[...rentalPointLocations].map((location) =>
-            setRentalPointLocationPickListElement(location)
+          {[...rentalPoints].map((point) =>
+            setRentalPointLocationPickListElement(point)
           )}
         </Select>
+        {inputErrors.rentTo && (
+          <FormHelperText>Select return location</FormHelperText>
+        )}
       </FormControl>
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <DatePicker
-          label="Reservation start date"
-          value={startDate}
-          onChange={handleStartDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-        <DatePicker
-          label="Reservation end date"
-          value={endDate}
-          onChange={handleEndDateChange}
-          renderInput={(params) => <TextField {...params} />}
-        />
-      </LocalizationProvider>
-      <Button variant="contained" color="primary">
-        Create Reservation
-      </Button>
+
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <FormControl required error={inputErrors.startDate}>
+          <DateTimePicker
+            label="Reservation start date"
+            value={formValues.startDate}
+            onChange={onStartDateChange}
+            disablePast
+            showTodayButton
+            ampm={false}
+            autoOk={true}
+            format="dd MMMM yy HH:MM"
+            margin="normal"
+            inputVariant="standard"
+          />
+          {inputErrors.startDate && (
+            <FormHelperText>Select date</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl required error={inputErrors.endDate}>
+          <DateTimePicker
+            label="Reservation end date"
+            value={formValues.endDate}
+            onChange={onEndDateChange}
+            disablePast
+            minDate={formValues.startDate}
+            ampm={false}
+            autoOk={true}
+            format="dd MMMM yy HH:MM"
+            margin="normal"
+            inputVariant="standard"
+          />
+          {inputErrors.endDate && <FormHelperText>Select date</FormHelperText>}
+        </FormControl>
+      </MuiPickersUtilsProvider>
+      <FormControl error={inputErrors.selectedBikes}>
+        <Button variant="contained" color="primary" onClick={handleClick}>
+          Create Reservation
+        </Button>
+        {inputErrors.selectedBikes && (
+          <FormHelperText>Select bike</FormHelperText>
+        )}
+      </FormControl>
     </Box>
   );
 };
