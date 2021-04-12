@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
 
-import { Nav } from './components/forms';
+import { Nav } from './components/nav/Nav';
 import { LoginPage, RegisterPage } from './pages';
 import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
-import { Reservations } from './components/reservations';
+import { ReservationPage } from './pages/reservationPage/ReservationPage';
 
 export const App = () => {
   const classes = useStyles(theme);
@@ -24,7 +24,7 @@ export const App = () => {
               <RegisterPage />
             </Route>
             <Route path="/reservations">
-              <Reservations />
+              <ReservationPage />
             </Route>
           </Switch>
         </Router>

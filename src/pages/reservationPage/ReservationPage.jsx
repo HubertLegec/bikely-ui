@@ -7,10 +7,10 @@ import Typography from '@material-ui/core/Typography';
 
 import { BikelyApi } from '../../api/BikelyApi';
 
-import { Filters } from './Filters';
-import { BikeTable } from './BikeTable';
+import { Filters } from './filters/Filters';
+import { BikeTable } from './bikeTable/BikeTable';
 
-export const Reservations = () => {
+export const ReservationPage = () => {
   const [bikes, setBikes] = useState([]);
 
   const [formValues, setFormValues] = useState({

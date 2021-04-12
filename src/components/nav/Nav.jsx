@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { AppBar, Button, Tab, Tabs } from '@material-ui/core';
+import { AppBar, Tab, Tabs } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
-import { navTabs } from './LoginForm.constants';
+import { navTabs } from './Nav.constants';
 
 export const Nav = () => {
   const history = useHistory();
@@ -27,9 +27,6 @@ export const Nav = () => {
           <Tab value={value} label={label} key={index} />
         ))}
       </Tabs>
-      <Button color="secondary" href="/reservations">
-        Create Reservation
-      </Button>
     </AppBar>
   );
 };
