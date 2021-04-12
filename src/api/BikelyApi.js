@@ -1,7 +1,6 @@
 export class BikelyApi {
-
-  static apiUrl = "http://localhost:8080";
-  // static apiUrl = 'https://coderscamp-bikely.herokuapp.com/';
+  // static apiUrl = 'http://localhost:8080';
+  static apiUrl = 'https://coderscamp-bikely.herokuapp.com/';
   static _accessToken = '';
 
   static set accessToken(accessToken) {
@@ -49,38 +48,39 @@ export class BikelyApi {
   }
 
   static async getBikes(startDate) {
-    const data = await fetch(
-      `${BikelyApi.apiUrl}/bikes?reservationDate=${startDate}`,
-      {
-        method: "GET",
-        mode: "cors",
-        credentials: "omit",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${BikelyApi.accessToken}`,
-          "Access-Control-Allow-Credentials": true,
-        },
-      }
-    ).then((res) => res.json());
+    const date = Date.parse(startDate);
+    console.log(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`);
+    const data = await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${startDate}`, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        'Access-Control-Allow-Credentials': true,
+      },
+    }).then((res) => res.json());
+
     return data;
   }
 
   static async postReservation(reservation) {
     console.log(BikelyApi.accessToken);
     const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
-      method: "POST",
-      mode: "cors",
-      credentials: "omit",
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'omit',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${BikelyApi.accessToken}`,
-        "Access-Control-Allow-Credentials": true,
+        'Access-Control-Allow-Credentials': true,
       },
       body: JSON.stringify(reservation),
     });
     const result = await response.json();
     console.log(result);
     if (!response.ok) result.error = true;
+
     return result;
   }
 

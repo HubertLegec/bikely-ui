@@ -1,29 +1,23 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import {
-  Box,
-  Button,
-  FormControlLabel,
-  FormHelperText,
-  Switch,
-} from "@material-ui/core";
-import PropTypes from "prop-types";
-import { DateTimePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
-import DateFnsUtils from "@date-io/date-fns";
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import { Box, Button, FormControlLabel, FormHelperText, Switch } from '@material-ui/core';
+import PropTypes from 'prop-types';
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import DateFnsUtils from '@date-io/date-fns';
 
 const useStyles = makeStyles({
   root: {
     minWidth: 120,
-    display: "flex",
-    flexDirection: "Column",
+    display: 'flex',
+    flexDirection: 'Column',
   },
 });
 
-const Filters = ({
+export const Filters = ({
   bikes,
   formValues,
   onBikeTypeChange,
@@ -38,20 +32,20 @@ const Filters = ({
   const bikeTypes = new Set(
     bikes.map((e) => {
       return e.type;
-    })
-  ).add("");
+    }),
+  ).add('');
   const frameSizes = new Set(
     bikes.map((e) => {
       return e.frameSize;
-    })
-  ).add("");
+    }),
+  ).add('');
   const rentalPoints = new Set(
     bikes
       .map((e) => {
         return e.rentalPoint;
       })
-      .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i)
-  ).add({ id: "", location: "" });
+      .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i),
+  ).add({ id: '', location: '' });
 
   const classes = useStyles();
   const [inputErrors, setInputErrors] = useState({
@@ -65,11 +59,7 @@ const Filters = ({
     return <MenuItem value={frameSize}>{frameSize}</MenuItem>;
   }
   function setBikeTypePickListElement(type) {
-    return (
-      <MenuItem value={type}>
-        {type.charAt(0).toUpperCase() + type.slice(1)}
-      </MenuItem>
-    );
+    return <MenuItem value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</MenuItem>;
   }
 
   function setRentalPointLocationPickListElement(rentalPoint) {
@@ -100,13 +90,9 @@ const Filters = ({
     let allValid = true;
 
     !formValues.rentTo ? (errors.rentTo = true) : (errors.rentTo = false);
-    !formValues.startDate
-      ? (errors.startDate = true)
-      : (errors.startDate = false);
+    !formValues.startDate ? (errors.startDate = true) : (errors.startDate = false);
     !formValues.endDate ? (errors.endDate = true) : (errors.endDate = false);
-    !formValues.selectedBikes.length
-      ? (errors.selectedBikes = true)
-      : (errors.selectedBikes = false);
+    !formValues.selectedBikes.length ? (errors.selectedBikes = true) : (errors.selectedBikes = false);
 
     setInputErrors({ ...errors });
 
@@ -133,13 +119,7 @@ const Filters = ({
         </Select>
       </FormControl>
       <FormControlLabel
-        control={
-          <Switch
-            checked={formValues.isElectric}
-            onChange={onIsElectricSwitchChange}
-            name="isElectric"
-          />
-        }
+        control={<Switch checked={formValues.isElectric} onChange={onIsElectricSwitchChange} name="isElectric" />}
         label="Electric Engine"
       />
 
@@ -162,9 +142,7 @@ const Filters = ({
           value={formValues.rentFrom}
           onChange={onPickupLocationChange}
         >
-          {[...rentalPoints].map((point) =>
-            setRentalPointLocationPickListElement(point)
-          )}
+          {[...rentalPoints].map((point) => setRentalPointLocationPickListElement(point))}
         </Select>
       </FormControl>
       <FormControl required error={inputErrors.rentTo}>
@@ -175,13 +153,9 @@ const Filters = ({
           value={formValues.rentTo}
           onChange={onReturnLocationChange}
         >
-          {[...rentalPoints].map((point) =>
-            setRentalPointLocationPickListElement(point)
-          )}
+          {[...rentalPoints].map((point) => setRentalPointLocationPickListElement(point))}
         </Select>
-        {inputErrors.rentTo && (
-          <FormHelperText>Select return location</FormHelperText>
-        )}
+        {inputErrors.rentTo && <FormHelperText>Select return location</FormHelperText>}
       </FormControl>
 
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -198,9 +172,7 @@ const Filters = ({
             margin="normal"
             inputVariant="standard"
           />
-          {inputErrors.startDate && (
-            <FormHelperText>Select date</FormHelperText>
-          )}
+          {inputErrors.startDate && <FormHelperText>Select date</FormHelperText>}
         </FormControl>
         <FormControl required error={inputErrors.endDate}>
           <DateTimePicker
@@ -222,12 +194,10 @@ const Filters = ({
         <Button variant="contained" color="primary" onClick={handleClick}>
           Create Reservation
         </Button>
-        {inputErrors.selectedBikes && (
-          <FormHelperText>Select bike</FormHelperText>
-        )}
+        {inputErrors.selectedBikes && <FormHelperText>Select bike</FormHelperText>}
       </FormControl>
     </Box>
   );
 };
 
-export default Filters;
+// export default Filters;

@@ -1,21 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { Container, Grid } from "@material-ui/core";
-import BikeTable from "./BikeTable";
-import Filters from "./Filters";
-import DateFnsAdapter from "@material-ui/lab/AdapterDateFns";
-import LocalizationProvider from "@material-ui/lab/LocalizationProvider";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { BikelyApi } from "../../api/BikelyApi";
+import React, { useState, useEffect } from 'react';
+import { Container, Grid } from '@material-ui/core';
+import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
+import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-const Reservations = () => {
+import { BikelyApi } from '../../api/BikelyApi';
+
+import { Filters } from './Filters';
+import { BikeTable } from './BikeTable';
+
+export const Reservations = () => {
   const [bikes, setBikes] = useState([]);
+
   const [formValues, setFormValues] = useState({
     selectedBikes: [],
-    selectedBikeType: "",
-    isElectric: "",
-    selectedFrameSize: "",
-    rentFrom: "",
-    rentTo: "",
+    selectedBikeType: '',
+    isElectric: '',
+    selectedFrameSize: '',
+    rentFrom: '',
+    rentTo: '',
     startDate: null,
     endDate: null,
   });
@@ -39,10 +42,11 @@ const Reservations = () => {
     return bikes.filter((bike) => {
       bike.location = bike.rentalPoint.id;
       for (let key in filter) {
-        if (bike[key] !== filter[key] && filter[key] !== "") {
+        if (bike[key] !== filter[key] && filter[key] !== '') {
           return false;
         }
       }
+
       return true;
     });
   };
@@ -92,11 +96,11 @@ const Reservations = () => {
         bike_id: bikeId,
         plannedDateFrom: formValues.startDate,
         plannedDateTo: formValues.endDate,
-        rentalPointFrom_id: bikes.find((bike) => bike.bikeId === bikeId)
-          .rentalPoint.id,
+        rentalPointFrom_id: bikes.find((bike) => bike.bikeId === bikeId).rentalPoint.id,
         rentalPointTo_id: formValues.rentTo,
       };
       reservations.push(reservation);
+      console.log(reservations);
     });
     reservations.forEach((res) => BikelyApi.postReservation(res));
   };
@@ -123,14 +127,11 @@ const Reservations = () => {
           </LocalizationProvider>
         </Grid>
         <Grid item xs={9}>
-          <BikeTable
-            bikes={filterTable(bikes)}
-            onBikeSelection={handleBikeSelection}
-          />
+          <BikeTable bikes={filterTable(bikes)} onBikeSelection={handleBikeSelection} />
         </Grid>
       </Grid>
     </Container>
   );
 };
 
-export default Reservations;
+// export default Reservations;
