@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, Button } from '@material-ui/core';
+import { FormGroup, Button, useTheme } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 import { EmailInput, PasswordInput } from '../inputs';
@@ -7,7 +7,8 @@ import { EmailInput, PasswordInput } from '../inputs';
 import { useStyles } from './LoginForm.styles';
 
 export const LoginForm = ({ formik, formError }) => {
-  const classes = useStyles();
+  const theme = useTheme();
+  const classes = useStyles(theme);
 
   const { handleSubmit, errors, values, handleChange, isSubmitting } = formik;
   const { password, email } = values;
