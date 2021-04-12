@@ -27,6 +27,9 @@ export const Nav = () => {
           <Tab value={value} label={label} key={index} />
         ))}
       </Tabs>
+      <Button color="secondary" href="/reservations">
+        Create Reservation
+      </Button>
     </AppBar>
   );
 };

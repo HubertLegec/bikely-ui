@@ -1,5 +1,4 @@
 import React from 'react';
-import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
 
@@ -7,6 +6,7 @@ import { Nav } from './components/forms';
 import { LoginPage, RegisterPage } from './pages';
 import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
+import { Reservations } from './components/reservations';
 
 export const App = () => {
   const classes = useStyles(theme);
@@ -22,6 +22,9 @@ export const App = () => {
             </Route>
             <Route path="/register">
               <RegisterPage />
+            </Route>
+            <Route path="/reservations">
+              <Reservations />
             </Route>
           </Switch>
         </Router>
