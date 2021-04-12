@@ -10,7 +10,7 @@ export const LoginForm = ({ formik, formError, loading }) => {
   const theme = useTheme();
   const classes = useStyles(theme);
 
-  const { handleSubmit, errors, values, handleChange, isSubmitting } = formik;
+  const { handleSubmit, errors, values, isSubmitting, handleChange } = formik;
   const { password, email } = values;
 
   return (

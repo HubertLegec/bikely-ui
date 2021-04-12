@@ -13,10 +13,12 @@ export const EmailInput = ({ id, name, errors, onChange }) => {
         error={!!errors}
         id={id}
         name={name}
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
         aria-describedby="email-input-field"
       />
-      <FormHelperText className={styles.FormHelperText}>{errors ? errors : ''}</FormHelperText>
+      <FormHelperText id="FormInputHelperText" className={styles.FormHelperText}>
+        {errors ? errors : ''}
+      </FormHelperText>
     </FormControl>
   );
 };

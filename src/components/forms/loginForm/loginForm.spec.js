@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { act, waitFor, fireEvent } from '@testing-library/react';
+import { ThemeProvider } from '@material-ui/styles';
 
 import { BikelyApi } from '../../../api/BikelyApi';
+import { theme } from '../../../theme/theme';
 
 import { LoginForm } from './LoginForm';
 
@@ -27,40 +29,67 @@ afterEach(() => {
 });
 
 const setup = () => {
+  const formik = {
+    handleSubmit: jest.fn(),
+    values: {},
+    errors: {},
+    handleChange: jest.fn(),
+  };
   act(() => {
-    ReactDOM.render(<LoginForm />, container);
+    const loading = false;
+    const formError = '';
+    /*
+    const formik = {
+      handleSubmit: jest.fn(),
+      values: {},
+      errors: {},
+      handleChange: jest.fn(),
+    };
+*/
+    ReactDOM.render(
+      <ThemeProvider theme={theme}>
+        <LoginForm formik={formik} formError={formError} loading={loading} />
+      </ThemeProvider>,
+      container,
+    );
   });
+  const form = container.querySelector('form');
   const button = container.querySelector('button');
   const passwordInput = container.querySelector('#password');
   const emailInput = container.querySelector('#email');
 
-  return { button, passwordInput, emailInput };
+  return { formik, form, button, passwordInput, emailInput };
 };
 
 describe('Validation tests', () => {
-  it('Should display required under empty inputs', async () => {
+  it('Should display `required` twice when LOGIN button pressed with empty inputs', async () => {
     const promise = Promise.resolve();
-    const { button } = setup();
-    const elements = container.querySelectorAll('.MuiFormHelperText-root');
+    const { formik, form, button, passwordInput, emailInput } = setup();
+    const elements = container.querySelectorAll('#FormInputHelperText');
 
     act(() => {
-      button.dispatchEvent(new MouseEvent('click'));
+      // fireEvent.change(emailInput, { target: { value: 'Required' } });
+      // fireEvent.change(passwordInput, { target: { value: 'Required' } });
+      fireEvent.submit(form);
     });
 
     await waitFor(
       () => {
-        expect(elements[0]).toHaveTextContent('Required');
-        expect(elements[1]).toHaveTextContent('Required');
+        expect(formik.handleSubmit).toHaveBeenCalledTimes(1);
+        expect(elements.length).toBe(2);
+        // expect(elements[0]).toHaveTextContent('Required');
+        // expect(elements[1]).toHaveTextContent('Required');
+        console.log(elements[0]);
       },
       { timeout: 100 },
     );
     await act(() => promise);
   });
 
-  it('Should display too short if password has less than 8 chars', async () => {
+  it('Should display `too short` if password is less than 8 chars long', async () => {
     const promise = Promise.resolve();
     const { passwordInput } = setup();
-    const elements = container.querySelectorAll('.MuiFormHelperText-root');
+    const elements = container.querySelectorAll('#FormInputHelperText');
 
     act(() => {
       fireEvent.change(passwordInput, { target: { value: '1234' } });
@@ -75,10 +104,10 @@ describe('Validation tests', () => {
     await act(() => promise);
   });
 
-  it('Should display invalid email if email is invalid', async () => {
+  it('Should display `invalid email` if email is invalid', async () => {
     const promise = Promise.resolve();
     const { emailInput } = setup();
-    const elements = container.querySelectorAll('.MuiFormHelperText-root');
+    const elements = container.querySelectorAll('#FormInputHelperText');
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: 'not.validEmail' } });
@@ -96,7 +125,7 @@ describe('Validation tests', () => {
   it("Shouldn't display anything if inputs are valid", async () => {
     const promise = Promise.resolve();
     const { emailInput, passwordInput } = setup();
-    const elements = container.querySelectorAll('.MuiFormHelperText-root');
+    const elements = container.querySelectorAll('#FormInputHelperText');
 
     act(() => {
       fireEvent.change(emailInput, { target: { value: 'valid@email.com' } });
