@@ -101,7 +101,6 @@ export const Reservations = () => {
         rentalPointTo_id: formValues.rentTo,
       };
       reservations.push(reservation);
-      console.log(reservations);
     });
     reservations.forEach((res) => BikelyApi.postReservation(res));
   };

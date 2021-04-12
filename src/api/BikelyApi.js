@@ -1,6 +1,5 @@
 export class BikelyApi {
-  static apiUrl = 'http://localhost:8080';
-  // static apiUrl = 'https://coderscamp-bikely.herokuapp.com/';
+  static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
   static _accessToken = '';
 
   static set accessToken(accessToken) {
@@ -49,8 +48,7 @@ export class BikelyApi {
 
   static async getBikes(startDate) {
     const date = Date.parse(startDate);
-    console.log(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`);
-    const data = await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${startDate}`, {
+    const data = await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`, {
       method: 'GET',
       mode: 'cors',
       credentials: 'omit',
@@ -65,7 +63,6 @@ export class BikelyApi {
   }
 
   static async postReservation(reservation) {
-    console.log(BikelyApi.accessToken);
     const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
       method: 'POST',
       mode: 'cors',
@@ -78,7 +75,6 @@ export class BikelyApi {
       body: JSON.stringify(reservation),
     });
     const result = await response.json();
-    console.log(result);
     if (!response.ok) result.error = true;
 
     return result;
