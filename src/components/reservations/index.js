@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid } from '@material-ui/core';
+import { Container, Grid, Paper } from '@material-ui/core';
 import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
 
 import { BikelyApi } from '../../api/BikelyApi';
 
@@ -109,22 +110,28 @@ export const Reservations = () => {
     <CircularProgress />
   ) : (
     <Container maxWidth="lg">
-      <Grid container spacing={3}>
+      <Typography variant="h4" component="h4" pt={5}>
+        Available bikes
+      </Typography>
+
+      <Grid container spacing={4} pt={5}>
         <Grid item xs={3}>
-          <LocalizationProvider dateAdapter={DateFnsAdapter}>
-            <Filters
-              bikes={bikes}
-              formValues={formValues}
-              onBikeTypeChange={handleBikeTypeChange}
-              onIsElectricSwitchChange={handleIsElectricSwitchChange}
-              onFrameSizeChange={handleFrameSizeChange}
-              onPickupLocationChange={handlePickupLocationChange}
-              onReturnLocationChange={handleReturnLocationChange}
-              onStartDateChange={handleStartDateChange}
-              onEndDateChange={handleEndDateChange}
-              createReservationRequest={handleCreateReservationRequest}
-            />
-          </LocalizationProvider>
+          <Paper>
+            <LocalizationProvider dateAdapter={DateFnsAdapter}>
+              <Filters
+                bikes={bikes}
+                formValues={formValues}
+                onBikeTypeChange={handleBikeTypeChange}
+                onIsElectricSwitchChange={handleIsElectricSwitchChange}
+                onFrameSizeChange={handleFrameSizeChange}
+                onPickupLocationChange={handlePickupLocationChange}
+                onReturnLocationChange={handleReturnLocationChange}
+                onStartDateChange={handleStartDateChange}
+                onEndDateChange={handleEndDateChange}
+                createReservationRequest={handleCreateReservationRequest}
+              />
+            </LocalizationProvider>
+          </Paper>
         </Grid>
         <Grid item xs={9}>
           <BikeTable bikes={filterTable(bikes)} onBikeSelection={handleBikeSelection} />
@@ -133,5 +140,3 @@ export const Reservations = () => {
     </Container>
   );
 };
-
-// export default Reservations;

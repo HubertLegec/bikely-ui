@@ -1,6 +1,6 @@
 export class BikelyApi {
-  // static apiUrl = 'http://localhost:8080';
-  static apiUrl = 'https://coderscamp-bikely.herokuapp.com/';
+  static apiUrl = 'http://localhost:8080';
+  // static apiUrl = 'https://coderscamp-bikely.herokuapp.com/';
   static _accessToken = '';
 
   static set accessToken(accessToken) {

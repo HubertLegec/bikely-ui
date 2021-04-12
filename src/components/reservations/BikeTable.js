@@ -34,6 +34,7 @@ function getComparator(order, orderBy) {
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
+    console.log(a);
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
 
@@ -113,7 +114,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   table: {
-    minWidth: 750,
+    minWidth: 500,
   },
   visuallyHidden: {
     border: 0,
@@ -134,7 +135,7 @@ export const BikeTable = ({ bikes, onBikeSelection }) => {
   const [orderBy, setOrderBy] = useState('');
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const rows = bikes.map((bike) => convertToBikeRecord(bike));
 
@@ -236,5 +237,3 @@ export const BikeTable = ({ bikes, onBikeSelection }) => {
     </div>
   );
 };
-
-// export default BikeTable;

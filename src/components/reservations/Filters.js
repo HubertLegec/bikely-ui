@@ -12,6 +12,8 @@ import DateFnsUtils from '@date-io/date-fns';
 const useStyles = makeStyles({
   root: {
     minWidth: 120,
+    padding: 10,
+    height: '100%',
     display: 'flex',
     flexDirection: 'Column',
   },
@@ -199,5 +201,3 @@ export const Filters = ({
     </Box>
   );
 };
-
-// export default Filters;
