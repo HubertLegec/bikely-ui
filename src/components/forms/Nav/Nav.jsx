@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Button, IconButton, Toolbar } from '@material-ui/core';
+import { AppBar, IconButton, Toolbar, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
 export const Nav = () => {
@@ -13,6 +13,9 @@ export const Nav = () => {
         <Link to="/register">
           <Button>Register</Button>
         </Link>
+        <Button color="secondary" href="/reservations">
+          Create Reservation
+        </Button>
       </Toolbar>
     </AppBar>
   );
