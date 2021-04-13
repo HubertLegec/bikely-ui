@@ -6,17 +6,19 @@ import styles from '../input.module.css';
 
 export const PasswordInput = ({ id, errors, name, onChange }) => {
   return (
-    <FormControl>
+    <FormControl fullWidth>
       <InputLabel htmlFor={id}>Password</InputLabel>
       <Input
         type="password"
         error={!!errors}
         id={id}
         name={name}
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
         aria-describedby="password-input-field"
       />
-      <FormHelperText className={styles.FormHelperText}>{errors ? errors : ''}</FormHelperText>
+      <FormHelperText id="FormInputHelperText" className={styles.FormHelperText}>
+        {errors ? errors : ''}
+      </FormHelperText>
     </FormControl>
   );
 };

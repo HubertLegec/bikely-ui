@@ -1,23 +1,25 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import { Box, Button, FormControlLabel, FormHelperText, Switch } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  FormHelperText,
+  Switch,
+  useTheme,
+  InputLabel,
+  FormControl,
+  Select,
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
 
-const useStyles = makeStyles({
-  root: {
-    minWidth: 120,
-    padding: 10,
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'Column',
-  },
-});
+import { useStyles } from './Filters.styles.js';
+import {
+  setFrameSizePickListElement,
+  setBikeTypePickListElement,
+  setRentalPointLocationPickListElement,
+} from './functions';
 
 export const Filters = ({
   bikes,
@@ -31,6 +33,9 @@ export const Filters = ({
   onEndDateChange,
   createReservationRequest,
 }) => {
+  const theme = useTheme();
+  const classes = useStyles(theme);
+
   const bikeTypes = new Set(
     bikes.map((e) => {
       return e.type;
@@ -49,24 +54,12 @@ export const Filters = ({
       .filter((v, i, a) => a.findIndex((t) => t.id === v.id) === i),
   ).add({ id: '', location: '' });
 
-  const classes = useStyles();
   const [inputErrors, setInputErrors] = useState({
     rentTo: false,
     startDate: false,
     endDate: false,
     selectedBikes: false,
   });
-
-  function setFrameSizePickListElement(frameSize) {
-    return <MenuItem value={frameSize}>{frameSize}</MenuItem>;
-  }
-  function setBikeTypePickListElement(type) {
-    return <MenuItem value={type}>{type.charAt(0).toUpperCase() + type.slice(1)}</MenuItem>;
-  }
-
-  function setRentalPointLocationPickListElement(rentalPoint) {
-    return <MenuItem value={rentalPoint.id}>{rentalPoint.location}</MenuItem>;
-  }
 
   Filters.propTypes = {
     bikes: PropTypes.any,
@@ -104,7 +97,7 @@ export const Filters = ({
       }
     });
 
-    return allValid ? true : false;
+    return !!allValid;
   };
 
   return (
