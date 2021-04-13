@@ -16,6 +16,9 @@ export const Nav = () => {
         <Button color="secondary" href="/reservations">
           Create Reservation
         </Button>
+        <Button color="secondary" href="/rentBikes">
+          Rent Bikes
+        </Button>
       </Toolbar>
     </AppBar>
   );
