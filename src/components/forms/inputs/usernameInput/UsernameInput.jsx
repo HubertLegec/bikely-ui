@@ -6,7 +6,7 @@ import styles from '../input.module.css';
 
 export const UsernameInput = ({ id, name, errors, onChange }) => {
   return (
-    <FormControl>
+    <FormControl fullWidth>
       <InputLabel htmlFor={id}>Username</InputLabel>
       <Input error={!!errors} id={id} name={name} onChange={(e) => onChange(e)} aria-describedby="email-input-field" />
       <FormHelperText className={styles.FormHelperText}>{errors ? errors : ''}</FormHelperText>
