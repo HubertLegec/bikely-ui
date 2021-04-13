@@ -26,9 +26,14 @@ export const ReservationPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    BikelyApi.getBikes(formValues.startDate).then((bikes) => {
-      setBikes(bikes);
-    });
+    (async function () {
+      try {
+        const bikes = await BikelyApi.getBikes(formValues.startDate);
+        setBikes(bikes);
+      } catch (error) {
+        console.log('error:', error);
+      }
+    })();
     setIsLoading(false);
   }, [formValues.startDate]);
 

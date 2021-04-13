@@ -69,8 +69,6 @@ export const LoginPage = () => {
     onSubmit,
   });
 
-  console.log('formik:', formik);
-
   return (
     <div className={classes.container}>
       <LoginRegisterFormWrapper>

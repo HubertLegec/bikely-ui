@@ -48,7 +48,8 @@ export class BikelyApi {
 
   static async getBikes(startDate) {
     const date = Date.parse(startDate);
-    const data = await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`, {
+
+    return await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`, {
       method: 'GET',
       mode: 'cors',
       credentials: 'omit',
@@ -58,8 +59,6 @@ export class BikelyApi {
         'Access-Control-Allow-Credentials': true,
       },
     }).then((res) => res.json());
-
-    return data;
   }
 
   static async postReservation(reservation) {
