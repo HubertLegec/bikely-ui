@@ -3,10 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
 
 import { Nav } from './components/nav/Nav';
-import { LoginPage, RegisterPage } from './pages';
+import { LoginPage, RegisterPage, ReservationPage } from './pages';
 import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
-import { ReservationPage } from './pages/reservationPage/ReservationPage';
 
 export const App = () => {
   const classes = useStyles(theme);
@@ -23,6 +22,9 @@ export const App = () => {
             <Route path="/register">
               <RegisterPage />
             </Route>
+            {/*
+            TODO: remove it later; only temporarily solution to reach page from tabs
+*/}
             <Route path="/reservations">
               <ReservationPage />
             </Route>
