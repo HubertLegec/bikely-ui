@@ -109,6 +109,21 @@ export class BikelyApi {
     return result;
   }
 
+  static async confirmRent(reservationId) {
+    const response = await fetch(`${BikelyApi.apiUrl}/reservations/rent/${reservationId}`, {
+      method: 'PUT',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
   static userHasAuthenticated() {
     return !!BikelyApi.accessToken;
   }

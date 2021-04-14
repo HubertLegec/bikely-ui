@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { Box, Button, FormHelperText } from '@material-ui/core';
+import { Autocomplete, Box, Button, TextField } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
@@ -19,13 +19,15 @@ const useStyles = makeStyles({
   },
 });
 
-export const RentFilters = ({ picklistData, filterValues, onPickupLocationChange, onStartDateChange, confirmRent }) => {
+export const RentFilters = ({
+  picklistData,
+  filterValues,
+  onPickupLocationChange,
+  onEmailChange,
+  onStartDateChange,
+  handleConfirmRent,
+}) => {
   const classes = useStyles();
-  const [inputErrors, setInputErrors] = useState({
-    selectedRecors: false,
-  });
-
-  console.log(filterValues.plannedDateFrom);
 
   function setRentalPointLocationPickListElement(rentalPoint) {
     return <MenuItem value={rentalPoint.id}>{rentalPoint.location}</MenuItem>;
@@ -35,34 +37,14 @@ export const RentFilters = ({ picklistData, filterValues, onPickupLocationChange
     picklistData: PropTypes.object,
     filterValues: PropTypes.object,
     onPickupLocationChange: PropTypes.func,
+    onEmailChange: PropTypes.func,
     onStartDateChange: PropTypes.func,
-    confirmRent: PropTypes.func,
+    handleConfirmRent: PropTypes.func,
   };
 
-  const handleClick = () => {
-    if (validateForm()) {
-      confirmRent();
-    }
-  };
-
-  const validateForm = () => {
-    const errors = { ...inputErrors };
-    let allValid = true;
-
-    !filterValues.rentTo ? (errors.rentTo = true) : (errors.rentTo = false);
-    !filterValues.startDate ? (errors.startDate = true) : (errors.startDate = false);
-    !filterValues.endDate ? (errors.endDate = true) : (errors.endDate = false);
-    !filterValues.selectedBikes.length ? (errors.selectedBikes = true) : (errors.selectedBikes = false);
-
-    setInputErrors({ ...errors });
-
-    Object.values(errors).forEach((error) => {
-      if (error) {
-        allValid = false;
-      }
-    });
-
-    return allValid ? true : false;
+  const defaultProps = {
+    options: [...picklistData.userEmails],
+    getOptionLabel: (option) => option,
   };
 
   return (
@@ -78,6 +60,16 @@ export const RentFilters = ({ picklistData, filterValues, onPickupLocationChange
           {picklistData.points.map((point) => setRentalPointLocationPickListElement(point))}
         </Select>
       </FormControl>
+      <Autocomplete
+        {...defaultProps}
+        autoComplete
+        autoHighlight
+        id="customer-email-select"
+        onChange={(event, newValue) => {
+          onEmailChange(newValue);
+        }}
+        renderInput={(params) => <TextField {...params} label="Customer email" margin="normal" variant="standard" />}
+      />
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <DatePicker
           label="Reservation start date"
@@ -91,12 +83,9 @@ export const RentFilters = ({ picklistData, filterValues, onPickupLocationChange
           inputVariant="standard"
         />
       </MuiPickersUtilsProvider>
-      <FormControl error={inputErrors.selectedRecors}>
-        <Button variant="contained" color="primary" onClick={handleClick}>
-          Confirm
-        </Button>
-        {inputErrors.selectedRecors && <FormHelperText>Select bike to continue</FormHelperText>}
-      </FormControl>
+      <Button variant="contained" color="primary" onClick={handleConfirmRent}>
+        Confirm rent
+      </Button>
     </Box>
   );
 };

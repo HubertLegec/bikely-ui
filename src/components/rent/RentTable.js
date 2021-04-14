@@ -119,7 +119,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const RentTable = ({ reservationRecords, onBikeSelection }) => {
+export const RentTable = ({ reservationRecords, onReservationSelection }) => {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('');
@@ -128,7 +128,6 @@ export const RentTable = ({ reservationRecords, onBikeSelection }) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const rows = reservationRecords;
-  //   console.log('rows' + reservationRecords);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -151,7 +150,7 @@ export const RentTable = ({ reservationRecords, onBikeSelection }) => {
     }
 
     setSelected(selectedRecordIds);
-    // onRowSelection(selectedRecordIds);
+    onReservationSelection(selectedRecordIds);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -169,7 +168,7 @@ export const RentTable = ({ reservationRecords, onBikeSelection }) => {
 
   RentTable.propTypes = {
     reservationRecords: PropTypes.any,
-    onBikeSelection: PropTypes.func,
+    onReservationSelection: PropTypes.func,
   };
 
   return (

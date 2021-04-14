@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Grid, Paper } from '@material-ui/core';
+import { Container, Grid, Paper, Alert } from '@material-ui/core';
 import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import Slide from '@material-ui/core/Slide';
 
 import { BikelyApi } from '../../api/BikelyApi';
 import { RentTable } from '../../components/rent/RentTable';
 import { RentFilters } from '../../components/rent/RentFilters';
 
 import { convertToReservationRecords, generatePicklistData } from './RentPage.service';
-import { useStyles } from './RentPage.styles';
 
 export const RentPage = () => {
-  const classes = useStyles();
-
   const [isLoading, setIsLoading] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [alert, setAlert] = React.useState({ severity: '', message: '' });
   const [reservationRecords, setReservationRecords] = useState([]);
+  const [selectedReservations, setSelectedReservations] = useState([]);
   const [rentalPoints, setRentalPoints] = useState([]);
   const [filterValues, setFilterValues] = useState({
     rentFromLocation: '',
@@ -41,22 +44,16 @@ export const RentPage = () => {
 
   const filterTable = (reservationRecords) => {
     const filter = {
-      rentFromLocation: filterValues.rentFromLocation,
+      rentFromLocationId: filterValues.rentFromLocation,
       userEmail: filterValues.userEmail,
       parsedReservationDate: filterValues.plannedDateFrom
         ? Date.parse(filterValues.plannedDateFrom.toString().substring(0, 15))
         : '',
     };
 
-    console.log('records ' + reservationRecords);
-    console.log('filter ' + filter.rentFromLocation);
-
     return reservationRecords.filter((record) => {
       for (let key in filter) {
         if (record[key] !== filter[key] && filter[key] !== '') {
-          console.log(filter[key]);
-          console.log(record[key]);
-
           return false;
         }
       }
@@ -71,36 +68,90 @@ export const RentPage = () => {
   const handleStartDateChange = (date) => {
     setFilterValues((prev) => ({ ...prev, plannedDateFrom: date }));
   };
-  //   const handleConfirmRent = (event) => {
-  //     setFilterValues((prev) => ({ ...prev, rentFrom: event.target.value }));
-  //   };
+  const handleEmailChange = (newValue) => {
+    if (!newValue) {
+      newValue = '';
+    }
+    setFilterValues((prev) => ({ ...prev, userEmail: newValue }));
+  };
+  const handleReservationSelection = (reservationIds) => {
+    setSelectedReservations(reservationIds);
+  };
+
+  const handleConfirmRent = (event) => {
+    event.preventDefault();
+    if (selectedReservations.length !== 0) {
+      selectedReservations.forEach((id) => {
+        BikelyApi.confirmRent(id).then(
+          setReservationRecords(
+            reservationRecords.filter((record) => {
+              return record.id !== id;
+            }),
+          ),
+        );
+      });
+
+      setSelectedReservations([]);
+      setAlert({ severity: 'success', message: 'Rents confirmed' });
+      setSnackbarOpen(true);
+    } else {
+      setAlert({ severity: 'error', message: 'Select reservation' });
+      setSnackbarOpen(true);
+    }
+  };
+
+  function TransitionLeft(props) {
+    return <Slide {...props} direction="right" />;
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
 
   return isLoading ? (
     <CircularProgress />
   ) : (
     <Container maxWidth="lg">
-      <Grid item xs={3}>
-        <Paper>
-          <LocalizationProvider dateAdapter={DateFnsAdapter}>
-            <RentFilters
-              picklistData={generatePicklistData(rentalPoints)}
-              filterValues={filterValues}
-              onPickupLocationChange={handlePickupLocationChange}
-              onStartDateChange={handleStartDateChange}
-              //   confirmRent={handleConfirmRent}
-            />
-          </LocalizationProvider>
-        </Paper>
-      </Grid>
-
+      <Typography variant="h4" component="h4" pt={5}>
+        Current reservations
+      </Typography>
       <Grid container spacing={4} pt={5}>
         <Grid item xs={3}>
-          <Paper></Paper>
+          <Paper>
+            <LocalizationProvider dateAdapter={DateFnsAdapter}>
+              <RentFilters
+                picklistData={generatePicklistData(rentalPoints)}
+                filterValues={filterValues}
+                onPickupLocationChange={handlePickupLocationChange}
+                onStartDateChange={handleStartDateChange}
+                onEmailChange={handleEmailChange}
+                handleConfirmRent={handleConfirmRent}
+              />
+            </LocalizationProvider>
+          </Paper>
         </Grid>
-        <Grid item xs={10}>
-          <RentTable reservationRecords={filterTable(reservationRecords)} />
+        <Grid item xs={9}>
+          <RentTable
+            reservationRecords={filterTable(reservationRecords)}
+            onReservationSelection={handleReservationSelection}
+          />
         </Grid>
       </Grid>
+
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+        TransitionComponent={TransitionLeft}
+      >
+        <Alert onClose={handleSnackbarClose} severity={alert.severity}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };
