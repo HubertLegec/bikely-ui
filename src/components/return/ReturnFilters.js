@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { Autocomplete, Box, Button, TextField } from '@material-ui/core';
+import { Autocomplete, Box, Button, TextField, FormHelperText } from '@material-ui/core';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles({
@@ -29,6 +29,18 @@ export const ReturnFilters = ({
   function setRentalPointLocationPickListElement(rentalPoint) {
     return <MenuItem value={rentalPoint.id}>{rentalPoint.location}</MenuItem>;
   }
+  const [inputErrors, setInputErrors] = useState({
+    rentToLocation: false,
+  });
+
+  const handleClick = () => {
+    if (filterValues.rentToLocation) {
+      setInputErrors({ rentToLocation: false });
+      handleConfirmReturn();
+    } else {
+      setInputErrors({ rentToLocation: true });
+    }
+  };
 
   ReturnFilters.propTypes = {
     picklistData: PropTypes.object,
@@ -39,22 +51,23 @@ export const ReturnFilters = ({
   };
 
   const defaultProps = {
-    options: [...picklistData.userEmails],
+    options: [...picklistData.bikeIds],
     getOptionLabel: (option) => option,
   };
 
   return (
     <Box className={classes.root}>
-      <FormControl>
+      <FormControl required error={inputErrors.rentToLocation}>
         <InputLabel id="return-to-select">Return location</InputLabel>
         <Select
           labelId="return-to-select"
           id="return-to-select"
-          value={filterValues.rentTo}
+          value={filterValues.rentToLocation}
           onChange={onReturnLocationChange}
         >
           {picklistData.points.map((point) => setRentalPointLocationPickListElement(point))}
         </Select>
+        {inputErrors.rentToLocation && <FormHelperText>Select your rental point</FormHelperText>}
       </FormControl>
       <Autocomplete
         {...defaultProps}
@@ -67,7 +80,7 @@ export const ReturnFilters = ({
         renderInput={(params) => <TextField {...params} label="bike number" margin="normal" variant="standard" />}
       />
 
-      <Button variant="contained" color="primary" onClick={handleConfirmReturn}>
+      <Button variant="contained" color="primary" onClick={handleClick}>
         Return bike
       </Button>
     </Box>

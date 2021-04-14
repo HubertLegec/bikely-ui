@@ -44,10 +44,9 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'userEmail', numeric: false, disablePadding: true, label: 'Email' },
+  { id: 'userEmail', numeric: false, disablePadding: true, label: 'Reservation eMail' },
   { id: 'bikeId', numeric: true, disablePadding: false, label: 'Bike number' },
-  { id: 'onStock', numeric: true, disablePadding: true, label: 'Bike on stock' },
-  { id: 'plannedDateFrom', numeric: false, disablePadding: false, label: 'Reservation date' },
+  { id: 'actualDateFrom', numeric: false, disablePadding: false, label: 'Rent date' },
   { id: 'plannedDateTo', numeric: false, disablePadding: false, label: 'Return by' },
   { id: 'returnLocation', numeric: false, disablePadding: false, label: 'Return to' },
 ];
@@ -126,7 +125,6 @@ export const ReturnTable = ({ reservationRecords, onReservationSelection }) => {
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const rows = reservationRecords;
 
   const handleRequestSort = (event, property) => {
@@ -201,8 +199,7 @@ export const ReturnTable = ({ reservationRecords, onReservationSelection }) => {
                         {row.userEmail}
                       </TableCell>
                       <TableCell align="right">{row.bikeId}</TableCell>
-                      <TableCell align="right">{row.onStock}</TableCell>
-                      <TableCell align="right">{row.plannedDateFrom}</TableCell>
+                      <TableCell align="right">{row.actualDateFrom}</TableCell>
                       <TableCell align="right">{row.plannedDateTo}</TableCell>
                       <TableCell align="right">{row.returnLocation}</TableCell>
                     </TableRow>

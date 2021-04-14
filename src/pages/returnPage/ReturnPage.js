@@ -43,11 +43,7 @@ export const ReturnPage = () => {
 
   const filterTable = (reservationRecords) => {
     const filter = {
-      rentFromLocationId: filterValues.rentFromLocation,
-      userEmail: filterValues.userEmail,
-      parsedReservationDate: filterValues.plannedDateFrom
-        ? Date.parse(filterValues.plannedDateFrom.toString().substring(0, 15))
-        : '',
+      bikeId: filterValues.bikeNumber,
     };
 
     return reservationRecords.filter((record) => {
@@ -75,11 +71,10 @@ export const ReturnPage = () => {
     setSelectedRents(rentIds);
   };
 
-  const handleConfirmReturn = (event) => {
-    event.preventDefault();
-    if (selectedRents.length !== 0) {
+  const handleConfirmReturn = () => {
+    if (selectedRents.length) {
       selectedRents.forEach((id) => {
-        BikelyApi.returnBike(id).then(
+        BikelyApi.returnBike(filterValues.rentToLocation, id).then(
           setRentRecords(
             rentRecords.filter((record) => {
               return record.id !== id;
@@ -120,7 +115,7 @@ export const ReturnPage = () => {
           <Paper>
             <LocalizationProvider dateAdapter={DateFnsAdapter}>
               <ReturnFilters
-                picklistData={generatePicklistData(rentalPoints)}
+                picklistData={generatePicklistData(rentalPoints, rentRecords)}
                 filterValues={filterValues}
                 onReturnLocationChange={handleReturnLocationChange}
                 onBikeNumberChange={handleBikeNumberChange}

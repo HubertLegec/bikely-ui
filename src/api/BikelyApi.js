@@ -94,6 +94,21 @@ export class BikelyApi {
     return result;
   }
 
+  static async getPresentRents() {
+    const response = await fetch(`${BikelyApi.apiUrl}/reservations/rents/present`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
   static async getRentalPoints() {
     const response = await fetch(`${BikelyApi.apiUrl}/rentalpoints`, {
       method: 'GET',
@@ -124,15 +139,18 @@ export class BikelyApi {
     return result;
   }
 
-  static async returnBike(reservationId) {
-    const response = await fetch(`${BikelyApi.apiUrl}/reservations/return/${reservationId}`, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
+  static async returnBike(rentalPointTo_id, reservationId) {
+    const response = await fetch(
+      `${BikelyApi.apiUrl}/reservations/return/${reservationId}?rentalpoint_id=${rentalPointTo_id}`,
+      {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${BikelyApi.accessToken}`,
+        },
       },
-    });
+    );
     const result = await response.json();
     if (!response.ok) result.error = true;
 

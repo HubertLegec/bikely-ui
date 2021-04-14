@@ -1,44 +1,37 @@
 import { format, parseISO } from 'date-fns';
 
-export const convertToRentRecords = (reservations, rentalPoints) => {
+export const convertToRentRecords = (rents, rentalPoints) => {
   const response = [];
 
-  reservations.forEach((reservation) => {
-    const rentalPointBikes = rentalPoints.find((e) => e._id === reservation.rentalPointFrom_id).bicycle_id;
-    const reservationId = reservation.id;
+  rents.forEach((rent) => {
+    const reservationId = rent.id;
     const userEmail = 'email';
-    const bikeId = reservation.bike_id;
-    const onStock = rentalPointBikes.includes(reservation.bike_id) ? 'Yes' : 'No';
-    const plannedDateFrom = format(parseISO(reservation.plannedDateFrom), 'dd MMM yyyy hh:mm');
-    const parsedReservationDate = Date.parse(plannedDateFrom.toString().substring(0, 11));
-    const plannedDateTo = format(parseISO(reservation.plannedDateTo), 'dd MMM yyyy hh:mm');
-    const rentFromLocationId = reservation.rentalPointFrom_id;
-    const rentFromLocation = rentalPoints.find((e) => e._id === reservation.rentalPointFrom_id).location;
-    const returnLocation = rentalPoints.find((e) => e._id === reservation.rentalPointTo_id).location;
+    const bikeId = rent.bike_id;
+    const actualDateFrom = format(parseISO(rent.actualDateFrom), 'dd MMM yyyy hh:mm');
+    const plannedDateTo = format(parseISO(rent.plannedDateTo), 'dd MMM yyyy hh:mm');
+    const returnLocation = rentalPoints.find((e) => e._id === rent.rentalPointTo_id).location;
 
-    const reservationRecord = {
+    const rentRecord = {
       id: reservationId,
       userEmail: userEmail,
       bikeId: bikeId,
-      onStock: onStock,
-      plannedDateFrom: plannedDateFrom,
-      parsedReservationDate: parsedReservationDate,
+      actualDateFrom: actualDateFrom,
       plannedDateTo: plannedDateTo,
-      rentFromLocationId: rentFromLocationId,
-      rentFromLocation: rentFromLocation,
       returnLocation: returnLocation,
     };
-    response.push(reservationRecord);
+    response.push(rentRecord);
   });
 
   return response;
 };
 
-export const generatePicklistData = (rentalPoints) => {
+export const generatePicklistData = (rentalPoints, rentRecords) => {
   const points = rentalPoints.map((point) => {
     return { id: point._id, location: point.location };
   });
-  const bikeIds = ['email', 'email2'];
+  const bikeIds = rentRecords.map((rent) => {
+    return rent.bikeId;
+  });
 
   return { points, bikeIds };
 };
