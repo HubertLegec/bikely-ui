@@ -108,7 +108,7 @@ export const ReturnPage = () => {
   ) : (
     <Container maxWidth="lg">
       <Typography variant="h4" component="h4" pt={5}>
-        Present rents
+        Rented bikes
       </Typography>
       <Grid container spacing={4} pt={5}>
         <Grid item xs={3}>

@@ -44,7 +44,7 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'userEmail', numeric: false, disablePadding: true, label: 'Reservation eMail' },
+  { id: 'userEmail', numeric: false, disablePadding: true, label: 'Email' },
   { id: 'bikeId', numeric: true, disablePadding: false, label: 'Bike number' },
   { id: 'actualDateFrom', numeric: false, disablePadding: false, label: 'Rent date' },
   { id: 'plannedDateTo', numeric: false, disablePadding: false, label: 'Return by' },

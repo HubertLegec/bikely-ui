@@ -77,7 +77,7 @@ export const ReturnFilters = ({
         onChange={(event, newValue) => {
           onBikeNumberChange(newValue);
         }}
-        renderInput={(params) => <TextField {...params} label="bike number" margin="normal" variant="standard" />}
+        renderInput={(params) => <TextField {...params} label="Bike number" margin="normal" variant="standard" />}
       />
 
       <Button variant="contained" color="primary" onClick={handleClick}>
