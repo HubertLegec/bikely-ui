@@ -123,7 +123,7 @@ export const RentPage = () => {
           <Paper>
             <LocalizationProvider dateAdapter={DateFnsAdapter}>
               <RentFilters
-                picklistData={generatePicklistData(rentalPoints)}
+                picklistData={generatePicklistData(rentalPoints, reservationRecords)}
                 filterValues={filterValues}
                 onPickupLocationChange={handlePickupLocationChange}
                 onStartDateChange={handleStartDateChange}

@@ -6,7 +6,7 @@ export const convertToReservationRecords = (reservations, rentalPoints) => {
   reservations.forEach((reservation) => {
     const rentalPointBikes = rentalPoints.find((e) => e._id === reservation.rentalPointFrom_id).bicycle_id;
     const reservationId = reservation.id;
-    const userEmail = 'email';
+    const userEmail = reservation.user_id.email;
     const bikeId = reservation.bike_id;
     const onStock = rentalPointBikes.includes(reservation.bike_id) ? 'Yes' : 'No';
     const plannedDateFrom = format(parseISO(reservation.plannedDateFrom), 'dd MMM yyyy hh:mm');
@@ -34,11 +34,15 @@ export const convertToReservationRecords = (reservations, rentalPoints) => {
   return response;
 };
 
-export const generatePicklistData = (rentalPoints) => {
+export const generatePicklistData = (rentalPoints, reservationRecords) => {
   const points = rentalPoints.map((point) => {
     return { id: point._id, location: point.location };
   });
-  const userEmails = ['email', 'email2'];
+  const userEmails = new Set(
+    reservationRecords.map((record) => {
+      return record.userEmail;
+    }),
+  );
 
   return { points, userEmails };
 };

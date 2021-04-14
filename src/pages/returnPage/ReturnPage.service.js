@@ -5,7 +5,7 @@ export const convertToRentRecords = (rents, rentalPoints) => {
 
   rents.forEach((rent) => {
     const reservationId = rent.id;
-    const userEmail = 'email';
+    const userEmail = rent.user_id.email;
     const bikeId = rent.bike_id;
     const actualDateFrom = format(parseISO(rent.actualDateFrom), 'dd MMM yyyy hh:mm');
     const plannedDateTo = format(parseISO(rent.plannedDateTo), 'dd MMM yyyy hh:mm');
