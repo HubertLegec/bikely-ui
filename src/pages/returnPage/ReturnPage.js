@@ -8,22 +8,21 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 
 import { BikelyApi } from '../../api/BikelyApi';
-import { RentTable } from '../../components/rent/RentTable';
-import { RentFilters } from '../../components/rent/RentFilters';
+import { ReturnTable } from '../../components/return/ReturnTable';
+import { ReturnFilters } from '../../components/return/ReturnFilters';
 
-import { convertToReservationRecords, generatePicklistData } from './RentPage.service';
+import { convertToRentRecords, generatePicklistData } from './ReturnPage.service';
 
-export const RentPage = () => {
+export const ReturnPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
   const [alert, setAlert] = React.useState({ severity: '', message: '' });
-  const [reservationRecords, setReservationRecords] = useState([]);
-  const [selectedReservations, setSelectedReservations] = useState([]);
+  const [rentRecords, setRentRecords] = useState([]);
+  const [selectedRents, setSelectedRents] = useState([]);
   const [rentalPoints, setRentalPoints] = useState([]);
   const [filterValues, setFilterValues] = useState({
-    rentFromLocation: '',
-    userEmail: '',
-    plannedDateFrom: null,
+    rentToLocation: '',
+    bikeNumber: '',
   });
 
   useEffect(() => {
@@ -34,9 +33,9 @@ export const RentPage = () => {
 
   useEffect(() => {
     if (rentalPoints.length) {
-      BikelyApi.getReservations()
-        .then((reservations) => {
-          setReservationRecords(convertToReservationRecords(reservations, rentalPoints));
+      BikelyApi.getPresentRents()
+        .then((presentRents) => {
+          setRentRecords(convertToRentRecords(presentRents, rentalPoints));
         })
         .then(setIsLoading(false));
     }
@@ -62,40 +61,38 @@ export const RentPage = () => {
     });
   };
 
-  const handlePickupLocationChange = (event) => {
-    setFilterValues((prev) => ({ ...prev, rentFromLocation: event.target.value }));
+  const handleReturnLocationChange = (event) => {
+    setFilterValues((prev) => ({ ...prev, rentToLocation: event.target.value }));
   };
-  const handleStartDateChange = (date) => {
-    setFilterValues((prev) => ({ ...prev, plannedDateFrom: date }));
-  };
-  const handleEmailChange = (newValue) => {
+
+  const handleBikeNumberChange = (newValue) => {
     if (!newValue) {
       newValue = '';
     }
-    setFilterValues((prev) => ({ ...prev, userEmail: newValue }));
+    setFilterValues((prev) => ({ ...prev, bikeNumber: newValue }));
   };
-  const handleReservationSelection = (reservationIds) => {
-    setSelectedReservations(reservationIds);
+  const handleReservationSelection = (rentIds) => {
+    setSelectedRents(rentIds);
   };
 
-  const handleConfirmRent = (event) => {
+  const handleConfirmReturn = (event) => {
     event.preventDefault();
-    if (selectedReservations.length !== 0) {
-      selectedReservations.forEach((id) => {
-        BikelyApi.confirmRent(id).then(
-          setReservationRecords(
-            reservationRecords.filter((record) => {
+    if (selectedRents.length !== 0) {
+      selectedRents.forEach((id) => {
+        BikelyApi.returnBike(id).then(
+          setRentRecords(
+            rentRecords.filter((record) => {
               return record.id !== id;
             }),
           ),
         );
       });
 
-      setSelectedReservations([]);
-      setAlert({ severity: 'success', message: 'Rents confirmed' });
+      setSelectedRents([]);
+      setAlert({ severity: 'success', message: 'Bike returned' });
       setSnackbarOpen(true);
     } else {
-      setAlert({ severity: 'error', message: 'Select reservation' });
+      setAlert({ severity: 'error', message: 'Select bike' });
       setSnackbarOpen(true);
     }
   };
@@ -116,26 +113,25 @@ export const RentPage = () => {
   ) : (
     <Container maxWidth="lg">
       <Typography variant="h4" component="h4" pt={5}>
-        Current reservations
+        Present rents
       </Typography>
       <Grid container spacing={4} pt={5}>
         <Grid item xs={3}>
           <Paper>
             <LocalizationProvider dateAdapter={DateFnsAdapter}>
-              <RentFilters
+              <ReturnFilters
                 picklistData={generatePicklistData(rentalPoints)}
                 filterValues={filterValues}
-                onPickupLocationChange={handlePickupLocationChange}
-                onStartDateChange={handleStartDateChange}
-                onEmailChange={handleEmailChange}
-                handleConfirmRent={handleConfirmRent}
+                onReturnLocationChange={handleReturnLocationChange}
+                onBikeNumberChange={handleBikeNumberChange}
+                handleConfirmReturn={handleConfirmReturn}
               />
             </LocalizationProvider>
           </Paper>
         </Grid>
         <Grid item xs={9}>
-          <RentTable
-            reservationRecords={filterTable(reservationRecords)}
+          <ReturnTable
+            reservationRecords={filterTable(rentRecords)}
             onReservationSelection={handleReservationSelection}
           />
         </Grid>

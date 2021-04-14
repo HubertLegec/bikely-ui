@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper } from '@material-ui/core';
 import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 
 import { BikelyApi } from '../../api/BikelyApi';
@@ -111,7 +111,7 @@ export const ReservationPage = () => {
   };
 
   return isLoading ? (
-    <CircularProgress />
+    <LinearProgress color="secondary" />
   ) : (
     <Container maxWidth="lg">
       <Typography variant="h4" component="h4" pt={5}>

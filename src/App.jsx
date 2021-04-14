@@ -5,6 +5,7 @@ import { ThemeProvider } from '@material-ui/core';
 import { Nav } from './components/forms';
 import { LoginPage, RegisterPage, ReservationPage } from './pages';
 import { RentPage } from './pages/rentPage/RentPage';
+import { ReturnPage } from './pages/returnPage/ReturnPage';
 import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
 
@@ -31,6 +32,9 @@ export const App = () => {
             </Route>
             <Route path="/rentBikes">
               <RentPage />
+            </Route>
+            <Route path="/returnBikes">
+              <ReturnPage />
             </Route>
           </Switch>
         </Router>

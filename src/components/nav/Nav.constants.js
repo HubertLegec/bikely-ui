@@ -3,4 +3,5 @@ export const navTabs = [
   { value: 'register', label: 'Register', route: '/register' },
   { value: 'reservation', label: 'Create Reservation', route: '/reservations' },
   { value: 'rentBike', label: 'Rent Bike', route: '/rentBikes' },
+  { value: 'returnBike', label: 'Return Bike', route: '/returnBikes' },
 ];
