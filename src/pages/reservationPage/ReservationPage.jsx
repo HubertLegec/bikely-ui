@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Grid, Paper } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
 import LocalizationProvider from '@material-ui/lab/LocalizationProvider';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
+import Snackbar from '@material-ui/core/Snackbar';
+import Slide from '@material-ui/core/Slide';
 
 import { BikelyApi } from '../../api/BikelyApi';
 
@@ -12,6 +15,7 @@ import { BikeTable } from './bikeTable/BikeTable';
 
 export const ReservationPage = () => {
   const [bikes, setBikes] = useState([]);
+  const [selectedBikes, setSelectedBikes] = useState([]);
 
   const [formValues, setFormValues] = useState({
     selectedBikes: [],
@@ -24,6 +28,8 @@ export const ReservationPage = () => {
     endDate: null,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [alert, setAlert] = React.useState({ severity: '', message: '' });
 
   useEffect(() => {
     (async function () {
@@ -33,8 +39,8 @@ export const ReservationPage = () => {
       } catch (error) {
         console.log('error:', error);
       }
+      setIsLoading(false);
     })();
-    setIsLoading(false);
   }, [formValues.startDate]);
 
   const filterTable = (bikes) => {
@@ -92,26 +98,45 @@ export const ReservationPage = () => {
   };
 
   const handleBikeSelection = (bikeIds) => {
-    setFormValues((prev) => ({ ...prev, selectedBikes: bikeIds }));
+    setSelectedBikes(bikeIds);
   };
 
   const handleCreateReservationRequest = () => {
     const reservations = [];
-    formValues.selectedBikes.forEach((bikeId) => {
-      const reservation = {
-        bike_id: bikeId,
-        plannedDateFrom: formValues.startDate,
-        plannedDateTo: formValues.endDate,
-        rentalPointFrom_id: bikes.find((bike) => bike.bikeId === bikeId).rentalPoint.id,
-        rentalPointTo_id: formValues.rentTo,
-      };
-      reservations.push(reservation);
-    });
-    reservations.forEach((res) => BikelyApi.postReservation(res));
+    if (selectedBikes.length > 0) {
+      selectedBikes.forEach((bikeId) => {
+        const reservation = {
+          bike_id: bikeId,
+          plannedDateFrom: formValues.startDate,
+          plannedDateTo: formValues.endDate,
+          rentalPointFrom_id: bikes.find((bike) => bike.bikeId === bikeId).rentalPoint.id,
+          rentalPointTo_id: formValues.rentTo,
+        };
+        reservations.push(reservation);
+      });
+      reservations.forEach((res) => BikelyApi.postReservation(res));
+      setSelectedBikes([]);
+      setAlert({ severity: 'success', message: 'Reservation created' });
+      setSnackbarOpen(true);
+    } else {
+      setAlert({ severity: 'error', message: 'Select bike' });
+      setSnackbarOpen(true);
+    }
+  };
+
+  function TransitionLeft(props) {
+    return <Slide {...props} direction="right" />;
+  }
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
   };
 
   return isLoading ? (
-    <CircularProgress />
+    <LinearProgress color="secondary" />
   ) : (
     <Container maxWidth="lg">
       <Typography variant="h4" component="h4" pt={5}>
@@ -141,6 +166,17 @@ export const ReservationPage = () => {
           <BikeTable bikes={filterTable(bikes)} onBikeSelection={handleBikeSelection} />
         </Grid>
       </Grid>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+        TransitionComponent={TransitionLeft}
+      >
+        <Alert onClose={handleSnackbarClose} severity={alert.severity}>
+          {alert.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

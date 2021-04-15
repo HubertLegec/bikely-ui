@@ -87,7 +87,6 @@ export const Filters = ({
     !formValues.rentTo ? (errors.rentTo = true) : (errors.rentTo = false);
     !formValues.startDate ? (errors.startDate = true) : (errors.startDate = false);
     !formValues.endDate ? (errors.endDate = true) : (errors.endDate = false);
-    !formValues.selectedBikes.length ? (errors.selectedBikes = true) : (errors.selectedBikes = false);
 
     setInputErrors({ ...errors });
 
