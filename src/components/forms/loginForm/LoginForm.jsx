@@ -1,83 +1,49 @@
-import React, { useState } from 'react';
-import { useFormik } from 'formik';
-import { FormGroup, Button } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
+import { FormGroup, Button, Typography, Box, CircularProgress, useTheme } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 import { EmailInput, PasswordInput } from '../inputs';
-import { validateEmail, validatePassword } from '../../../helpers/validation';
-import styles from '../form.module.css';
-import { BikelyApi } from '../../../api/BikelyApi';
 
-export const LoginForm = () => {
-  const [inputValues, setInputValues] = useState({ email: '', password: '' });
-  const [inputErrors, setInputErrors] = useState({ email: '', password: '' });
-  const [formError, setFormError] = useState('');
-  const history = useHistory();
+import { useStyles } from './LoginForm.styles';
 
-  const validate = (values) => {
-    const errors = inputErrors;
-    let isAllValid = true;
+export const LoginForm = ({ formik, formError, loading }) => {
+  const theme = useTheme();
+  const classes = useStyles(theme);
 
-    if (inputValues.email !== values.email) {
-      errors.email = validateEmail(values.email);
-    } else if (inputValues.password !== values.password) {
-      errors.password = validatePassword(values.password);
-    } else {
-      errors.email = validateEmail(values.email);
-      errors.password = validatePassword(values.password);
-    }
-
-    for (const error in errors) {
-      if (errors[error].length !== 0) isAllValid = false;
-    }
-
-    setInputErrors(errors);
-    setInputValues(values);
-
-    return isAllValid ? null : errors;
-  };
-
-  const onSubmit = async (values, { setSubmitting }) => {
-    setFormError('');
-    const result = await BikelyApi.login(values);
-    if (result.error) {
-      setFormError('Invalid credentials');
-      setSubmitting(false);
-    } else if (BikelyApi.userHasAuthenticated()) {
-      history.push('/');
-    }
-  };
-
-  const formik = useFormik({
-    initialValues: { email: '', password: '' },
-    validate,
-    onSubmit,
-  });
+  const { handleSubmit, errors, values, isSubmitting, handleChange } = formik;
+  const { password, email } = values;
 
   return (
-    <form className="login" onSubmit={formik.handleSubmit}>
-      <FormGroup className={styles.loginForm}>
-        <EmailInput
-          errors={formik.errors.email}
-          id="email"
-          name="email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-        />
+    <form className="login" onSubmit={handleSubmit}>
+      <Typography variant="h5" className={classes.header}>
+        Login
+      </Typography>
+      <Box mb={2} />
+      <FormGroup className={classes.loginForm}>
+        <EmailInput errors={errors.email} id="email" name="email" value={email} onChange={handleChange} />
         <PasswordInput
-          errors={formik.errors.password}
+          errors={errors.password}
           id="password"
           name="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
+          value={password}
+          onChange={handleChange}
         />
-        <div id="formError" className={styles.formError}>
+        <div id="formError" className={classes.formError}>
           {formError}
         </div>
-        <Button className={styles.submitButton} type="submit" disabled={formik.isSubmitting}>
-          Submit
-        </Button>
+        <div className={classes.submitButton}>
+          <Button variant="outlined" color="primary" type="submit" disabled={isSubmitting}>
+            Login
+          </Button>
+          {loading && <CircularProgress size={24} className={classes.buttonProgress} />}
+        </div>
       </FormGroup>
     </form>
   );
+};
+
+LoginForm.propTypes = {
+  formik: PropTypes.object,
+  formError: PropTypes.string,
+  loading: PropTypes.bool,
 };

@@ -1,6 +1,6 @@
 export class BikelyApi {
-  //static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
-  static apiUrl = 'http://localhost:8080';
+  static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
+
   static _accessToken = '';
   static _profile;
   static observers = [];
@@ -141,6 +141,7 @@ export class BikelyApi {
     return result;
   }
 
+
   static async getReservations() {
     const profile = await BikelyApi.getProfile();
 
@@ -156,6 +157,35 @@ export class BikelyApi {
         },
       },
     );
+
+
+  static async getBikes(startDate) {
+    const date = Date.parse(startDate);
+
+    return await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`, {
+      method: 'GET',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        'Access-Control-Allow-Credentials': true,
+      },
+    }).then((res) => res.json());
+  }
+
+  static async postReservation(reservation) {
+    const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        'Access-Control-Allow-Credentials': true,
+      },
+      body: JSON.stringify(reservation),
+    });
 
     const result = await response.json();
     if (!response.ok) result.error = true;
