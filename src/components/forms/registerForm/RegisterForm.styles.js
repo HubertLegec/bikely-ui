@@ -1,7 +1,9 @@
 import { makeStyles } from '@material-ui/styles';
 import { green } from '@material-ui/core/colors';
 
-export const useStyles = makeStyles((theme) => ({
+import { theme } from '../../../theme/theme';
+
+export const useStyles = makeStyles(() => ({
   loginForm: {
     display: 'flex',
     flexDirection: 'column',
