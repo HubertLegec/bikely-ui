@@ -13,7 +13,10 @@ export const User = () => {
           <Button>Logout</Button>
         </Link>
         <Link to="/user/reservations">
-          <Button>Reservations</Button>
+          <Button>My reservations</Button>
+        </Link>
+        <Link to="/reservations">
+          <Button>Create Reservation</Button>
         </Link>
       </Toolbar>
     </AppBar>

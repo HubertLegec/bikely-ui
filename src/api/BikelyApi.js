@@ -1,6 +1,5 @@
 export class BikelyApi {
   static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
-
   static _accessToken = '';
   static _profile;
   static observers = [];
@@ -122,7 +121,7 @@ export class BikelyApi {
 
   static logout() {
     BikelyApi.accessToken = '';
-    BikelyApi.profile = undefined;
+    BikelyApi.profile = '';
     BikelyApi.notifyObservers();
   }
 
@@ -141,7 +140,6 @@ export class BikelyApi {
     return result;
   }
 
-
   static async getReservations() {
     const profile = await BikelyApi.getProfile();
 
@@ -158,6 +156,8 @@ export class BikelyApi {
       },
     );
 
+    return await response.json();
+  }
 
   static async getBikes(startDate) {
     const date = Date.parse(startDate);

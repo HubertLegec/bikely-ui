@@ -5,7 +5,7 @@ import { ThemeProvider } from '@material-ui/core';
 import { LoginPage, RegisterPage, UserReservations, RentalPointReservations, ReservationPage } from './pages';
 import { PrivateRoute } from './pages/PrivateRoute';
 import { Logout } from './pages/Logout';
-import { Nav } from './components/nav/Nav';
+import { Nav } from './components/Nav/Nav';
 import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
 

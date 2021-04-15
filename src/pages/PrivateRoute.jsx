@@ -9,7 +9,6 @@ export const PrivateRoute = ({ children, roles, ...rest }) => {
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    console.log(BikelyApi.profile);
     setUserProfile(BikelyApi.profile);
   }, []);
 
