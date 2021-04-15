@@ -6,6 +6,8 @@ import { LoginPage, RegisterPage, UserReservations, RentalPointReservations, Res
 import { PrivateRoute } from './pages/PrivateRoute';
 import { Logout } from './pages/Logout';
 import { Nav } from './components/Nav/Nav';
+import { RentPage } from './pages/rentPage/RentPage';
+import { ReturnPage } from './pages/returnPage/ReturnPage';
 import { theme } from './theme/theme';
 import { useStyles } from './App.styles';
 
@@ -35,6 +37,12 @@ export const App = () => {
             </Route>
             <Route path="/reservations">
               <ReservationPage />
+            </Route>
+            <Route path="/rentBikes">
+              <RentPage />
+            </Route>
+            <Route path="/returnBikes">
+              <ReturnPage />
             </Route>
           </Switch>
         </Router>

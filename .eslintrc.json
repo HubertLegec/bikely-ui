@@ -31,7 +31,17 @@
       }
     ],
     "no-console": "off",
-    "react/jsx-props-no-spreading": "error",
+    "react/jsx-props-no-spreading": [
+      "error",
+      {
+        "exceptions": [
+          "Autocomplete",
+          "TextField",
+          "MuiAlert",
+          "Slide"
+          ]
+      }   
+    ],
     "react-hooks/exhaustive-deps": "warn",
     "import/no-default-export": "error",
     "import/order": [

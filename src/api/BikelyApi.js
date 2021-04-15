@@ -193,6 +193,84 @@ export class BikelyApi {
     return result;
   }
 
+  static async getReservations() {
+    const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
+  static async getPresentRents() {
+    const response = await fetch(`${BikelyApi.apiUrl}/reservations/rents/present`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
+  static async getRentalPoints() {
+    const response = await fetch(`${BikelyApi.apiUrl}/rentalpoints`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
+  static async confirmRent(reservationId) {
+    const response = await fetch(`${BikelyApi.apiUrl}/reservations/rent/${reservationId}`, {
+      method: 'PUT',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${BikelyApi.accessToken}`,
+      },
+    });
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
+  static async returnBike(rentalPointTo_id, reservationId) {
+    const response = await fetch(
+      `${BikelyApi.apiUrl}/reservations/return/${reservationId}?rentalpoint_id=${rentalPointTo_id}`,
+      {
+        method: 'PUT',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${BikelyApi.accessToken}`,
+        },
+      },
+    );
+    const result = await response.json();
+    if (!response.ok) result.error = true;
+
+    return result;
+  }
+
   static userHasAuthenticated() {
     return !!BikelyApi.accessToken;
   }
