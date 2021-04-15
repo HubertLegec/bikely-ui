@@ -1,3 +1,4 @@
 export * from './loginPage/LoginPage';
 export * from './registerPage/RegisterPage';
-export * from './reservationsPage/ReservationsPage';
+export * from './reservations/User';
+export * from './reservations/RentalPoint';

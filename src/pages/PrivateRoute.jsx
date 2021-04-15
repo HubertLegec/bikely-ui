@@ -6,13 +6,12 @@ import PropTypes from 'prop-types';
 import { BikelyApi } from '../api/BikelyApi';
 
 export const PrivateRoute = ({ children, roles, ...rest }) => {
-  const [userProfile, setUserProfile] = useState({});
+  const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    (async () => {
-      setUserProfile(await BikelyApi.getProfile());
-    })();
-  });
+    console.log(BikelyApi.profile);
+    setUserProfile(BikelyApi.profile);
+  }, []);
 
   return (
     <Route
@@ -22,8 +21,12 @@ export const PrivateRoute = ({ children, roles, ...rest }) => {
           return <Redirect to={{ pathname: '/login' }} />;
         }
 
-        if (!userProfile || !roles.includes(userProfile.role)) {
-          return '';
+        if (userProfile === null) return '';
+
+        if (!userProfile) {
+          return 'Unauthorized';
+        } else if (!roles.includes(userProfile.role)) {
+          return 'Forbidden';
         }
 
         return children;

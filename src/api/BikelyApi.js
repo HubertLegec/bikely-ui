@@ -1,7 +1,22 @@
 export class BikelyApi {
-  static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
+  //static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
+  static apiUrl = 'http://localhost:8080';
   static _accessToken = '';
   static _profile;
+  static observers = [];
+
+  static registerObserver(observer) {
+    BikelyApi.observers.push(observer);
+  }
+  static notifyObservers() {
+    for (const observer of BikelyApi.observers) {
+      observer();
+    }
+  }
+  static removeObserver(observer) {
+    const observerIndex = BikelyApi.observers.indexOf(observer);
+    BikelyApi.observers.splice(observerIndex, 1);
+  }
 
   static set accessToken(accessToken) {
     localStorage.setItem('access_token', accessToken);
@@ -25,7 +40,6 @@ export class BikelyApi {
   }
 
   static async getProfile() {
-    console.log('profile: ', BikelyApi._profile);
     if (BikelyApi._profile) return BikelyApi._profile;
     const profileFromLocalStorage = JSON.parse(localStorage.getItem('profile'));
 
@@ -38,6 +52,18 @@ export class BikelyApi {
     const profile = await BikelyApi.fetchProfile();
     if (profile.ok) return profile;
     BikelyApi.handleError();
+  }
+
+  static get profile() {
+    if (BikelyApi._profile) return BikelyApi._profile;
+    const profileFromLocalStorage = JSON.parse(localStorage.getItem('profile'));
+    if (profileFromLocalStorage) {
+      BikelyApi._profile = profileFromLocalStorage;
+
+      return profileFromLocalStorage;
+    }
+
+    return null;
   }
 
   static set profile(profile) {
@@ -58,11 +84,13 @@ export class BikelyApi {
           'Access-Control-Allow-Credentials': true,
         },
       });
-      console.log(response);
+
       const result = await response.json();
+
       if (!response.ok) result.error = true;
-      console.log('userProfile fetch result: ', result);
+
       BikelyApi.profile = result;
+      BikelyApi.notifyObservers();
 
       return result;
     } catch (error) {
@@ -95,6 +123,7 @@ export class BikelyApi {
   static logout() {
     BikelyApi.accessToken = '';
     BikelyApi.profile = undefined;
+    BikelyApi.notifyObservers();
   }
 
   static async register(values) {
@@ -112,12 +141,11 @@ export class BikelyApi {
     return result;
   }
 
-  static async getReservations(options = { userId: false, rentalPoint: [] }) {
-    console.log(options);
+  static async getReservations() {
+    const profile = await BikelyApi.getProfile();
+
     const response = await fetch(
-      `${BikelyApi.apiUrl}/reservations/${
-        options.userId ? 'users/' + (await BikelyApi.getProfile()).id : 'rentalPoints/' + options.rentalPoint
-      }`,
+      `${BikelyApi.apiUrl}/reservations/${profile.role === 'User' ? 'users' : 'rental_points/' + profile.rentalPoint}`,
       {
         method: 'GET',
         mode: 'cors',

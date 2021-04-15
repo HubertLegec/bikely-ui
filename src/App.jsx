@@ -3,8 +3,9 @@ import './App.css';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import { Nav } from './components/forms';
-import { LoginPage, RegisterPage, ReservationsPage } from './pages';
+import { LoginPage, RegisterPage, UserReservations, RentalPointReservations } from './pages';
 import { PrivateRoute } from './pages/PrivateRoute';
+import { Logout } from './pages/Logout';
 
 export const App = () => {
   return (
@@ -17,9 +18,15 @@ export const App = () => {
         <Route path="/register">
           <RegisterPage />
         </Route>
-        <PrivateRoute roles={['User', 'Admin']} path="/reservations">
-          <ReservationsPage />
+        <PrivateRoute roles={['User']} path="/user/reservations">
+          <UserReservations />
         </PrivateRoute>
+        <PrivateRoute roles={['User', 'Admin']} path="/rental_point/reservations">
+          <RentalPointReservations />
+        </PrivateRoute>
+        <Route path="/logout">
+          <Logout />
+        </Route>
       </Switch>
     </Router>
   );

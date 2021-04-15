@@ -1,11 +1,11 @@
 import React from 'react';
 import { Grid, Paper } from '@material-ui/core';
 
-import { ReservationsTable } from '../../components/reservationsTable/ReservationsTable';
+import { ReservationsTable } from '../../components/tables/reservations/RentalPoint';
 
-import { useStyles } from './ReservationsPage.styles';
+import { useStyles } from './reservations.styles';
 
-export const ReservationsPage = () => {
+export const RentalPointReservations = () => {
   const classes = useStyles();
 
   return (

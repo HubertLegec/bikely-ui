@@ -1,22 +1,37 @@
-import React from 'react';
-import { AppBar, Button, IconButton, Toolbar } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+
+import { BikelyApi } from '../../api/BikelyApi';
+
+import { Basic } from './Basic';
+import { User } from './User';
+import { Admin } from './Admin';
 
 export const Nav = () => {
-  return (
-    <AppBar position="sticky">
-      <Toolbar>
-        <IconButton edge="start" />
-        <Link to="/login">
-          <Button>Login</Button>
-        </Link>
-        <Link to="/register">
-          <Button>Register</Button>
-        </Link>
-        <Link to="/reservations">
-          <Button>Reservations</Button>
-        </Link>
-      </Toolbar>
-    </AppBar>
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState({});
+
+  function handleUserChange() {
+    setIsAuthenticated(BikelyApi.userHasAuthenticated());
+    setUserRole(BikelyApi.profile.role);
+  }
+
+  useEffect(() => {
+    BikelyApi.registerObserver(handleUserChange);
+    setIsAuthenticated(BikelyApi.userHasAuthenticated());
+    setUserRole(BikelyApi.profile.role);
+
+    return () => {
+      BikelyApi.removeObserver(handleUserChange);
+    };
+  }, []);
+
+  function getProperNavbar() {
+    if (isAuthenticated) {
+      return userRole === 'User' ? <User /> : <Admin />;
+    }
+
+    return <Basic />;
+  }
+
+  return getProperNavbar();
 };
