@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 
 export const convertToReservationRecords = (reservations, rentalPoints) => {
+  if (!reservations) return {};
   const response = [];
 
   reservations.forEach((reservation) => {

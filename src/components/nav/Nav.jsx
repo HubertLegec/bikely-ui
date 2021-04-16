@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { AppBar } from '@material-ui/core';
 
 import { BikelyApi } from '../../api/BikelyApi';
 
 import { Basic } from './Basic';
 import { User } from './User';
 import { Admin } from './Admin';
+import { useStyles } from './Nav.style';
 
 export const Nav = () => {
+  const classes = useStyles();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState({});
 
@@ -35,5 +38,9 @@ export const Nav = () => {
     return <Basic />;
   }
 
-  return getProperNavbar();
+  return (
+    <AppBar className={classes.nav} position="sticky">
+      {getProperNavbar()}
+    </AppBar>
+  );
 };

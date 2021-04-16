@@ -1,3 +1,3 @@
 export * from './inputs';
-export * from './loginForm/LoginForm';
-export * from './registerForm/RegisterForm';
+export * from './login/LoginForm';
+export * from './register/RegisterForm';

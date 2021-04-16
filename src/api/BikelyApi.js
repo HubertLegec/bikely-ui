@@ -140,7 +140,7 @@ export class BikelyApi {
     return result;
   }
 
-  static async getReservations() {
+  static async getUserBasedReservations() {
     const profile = await BikelyApi.getProfile();
 
     const response = await fetch(

@@ -38,10 +38,10 @@ export const App = () => {
             <Route path="/reservations">
               <ReservationPage />
             </Route>
-            <Route path="/rentBikes">
+            <Route roles={['Admin']} path="/rentBikes">
               <RentPage />
             </Route>
-            <Route path="/returnBikes">
+            <Route roles={['Admin']} path="/returnBikes">
               <ReturnPage />
             </Route>
           </Switch>

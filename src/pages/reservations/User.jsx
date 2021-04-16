@@ -10,11 +10,13 @@ export const UserReservations = () => {
 
   return (
     <Grid alignItems="center" justify="center" style={{ minHeight: '100vh' }} container spacing={0}>
+      <Grid item xs={2}></Grid>
       <Grid item xs={8}>
         <Paper className={classes.paper}>
           <ReservationsTable />
         </Paper>
       </Grid>
+      <Grid item xs={2}></Grid>
     </Grid>
   );
 };
