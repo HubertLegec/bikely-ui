@@ -35,15 +35,15 @@ export const App = () => {
             <Route path="/logout">
               <Logout />
             </Route>
-            <Route path="/reservations">
+            <PrivateRoute roles={['User']} path="/reservations">
               <ReservationPage />
-            </Route>
-            <Route roles={['Admin']} path="/rentBikes">
+            </PrivateRoute>
+            <PrivateRoute roles={['Admin']} path="/rentBikes">
               <RentPage />
-            </Route>
-            <Route roles={['Admin']} path="/returnBikes">
+            </PrivateRoute>
+            <PrivateRoute roles={['Admin']} path="/returnBikes">
               <ReturnPage />
-            </Route>
+            </PrivateRoute>
           </Switch>
         </Router>
       </div>
