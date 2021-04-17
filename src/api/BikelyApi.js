@@ -78,8 +78,7 @@ export class BikelyApi {
         credentials: 'omit',
         headers: {
           'Content-Type': 'application/json',
-          //prettier-ignore
-          'Authorization': `Bearer ${BikelyApi.accessToken}`,
+          Authorization: `Bearer ${BikelyApi.accessToken}`,
           'Access-Control-Allow-Credentials': true,
         },
       });
@@ -150,8 +149,7 @@ export class BikelyApi {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          //prettier-ignore
-          'Authorization': `Bearer ${BikelyApi.accessToken}`,
+          Authorization: `Bearer ${BikelyApi.accessToken}`,
         },
       },
     );

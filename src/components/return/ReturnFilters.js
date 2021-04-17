@@ -27,7 +27,11 @@ export const ReturnFilters = ({
   const classes = useStyles();
 
   function setRentalPointLocationPickListElement(rentalPoint) {
-    return <MenuItem value={rentalPoint.id}>{rentalPoint.location}</MenuItem>;
+    return (
+      <MenuItem key={rentalPoint.id} value={rentalPoint.id}>
+        {rentalPoint.location}
+      </MenuItem>
+    );
   }
   const [inputErrors, setInputErrors] = useState({
     rentToLocation: false,

@@ -26,7 +26,7 @@ export const ReservationsTable = () => {
 
   useEffect(() => {
     (async function () {
-      const reservations = await BikelyApi.getReservations({ userId: true });
+      const reservations = await BikelyApi.getUserBasedReservations({ userId: true });
 
       if (reservations && reservations.length > 0) setReservations(sortReservations(reservations));
     })();
