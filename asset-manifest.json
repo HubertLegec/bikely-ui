@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/bikely-ui/static/css/main.a69fb1ea.chunk.css",
+    "main.js": "/bikely-ui/static/js/main.04e496ba.chunk.js",
+    "main.js.map": "/bikely-ui/static/js/main.04e496ba.chunk.js.map",
+    "runtime-main.js": "/bikely-ui/static/js/runtime-main.4aa67557.js",
+    "runtime-main.js.map": "/bikely-ui/static/js/runtime-main.4aa67557.js.map",
+    "static/js/2.713bbc39.chunk.js": "/bikely-ui/static/js/2.713bbc39.chunk.js",
+    "static/js/2.713bbc39.chunk.js.map": "/bikely-ui/static/js/2.713bbc39.chunk.js.map",
+    "static/js/3.77b85523.chunk.js": "/bikely-ui/static/js/3.77b85523.chunk.js",
+    "static/js/3.77b85523.chunk.js.map": "/bikely-ui/static/js/3.77b85523.chunk.js.map",
+    "index.html": "/bikely-ui/index.html",
+    "static/css/main.a69fb1ea.chunk.css.map": "/bikely-ui/static/css/main.a69fb1ea.chunk.css.map",
+    "static/js/2.713bbc39.chunk.js.LICENSE.txt": "/bikely-ui/static/js/2.713bbc39.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.4aa67557.js",
+    "static/js/2.713bbc39.chunk.js",
+    "static/css/main.a69fb1ea.chunk.css",
+    "static/js/main.04e496ba.chunk.js"
+  ]
+}
