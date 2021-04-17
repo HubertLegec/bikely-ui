@@ -8,7 +8,7 @@ import { validateEmail, validatePassword } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
 import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
 
-import { useStyles } from './LoginPage.styles';
+import { useStyles } from './Login.styles';
 
 const initialValues = { email: '', password: '' };
 

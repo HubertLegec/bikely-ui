@@ -2,8 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
 
-import { Nav } from './components/forms';
-import { LoginPage, RegisterPage, ReservationPage } from './pages';
+import { LoginPage, RegisterPage, UserReservations, RentalPointReservations, ReservationPage } from './pages';
+import { PrivateRoute } from './pages/PrivateRoute';
+import { Logout } from './pages/Logout';
+import { Nav } from './components/Nav/Nav';
 import { RentPage } from './pages/rentPage/RentPage';
 import { ReturnPage } from './pages/returnPage/ReturnPage';
 import { theme } from './theme/theme';
@@ -24,18 +26,24 @@ export const App = () => {
             <Route path="/register">
               <RegisterPage />
             </Route>
-            {/*
-            TODO: remove it later; only temporarily solution to reach page from tabs
-*/}
-            <Route path="/reservations">
+            <PrivateRoute roles={['User']} path="/user/reservations">
+              <UserReservations />
+            </PrivateRoute>
+            <PrivateRoute roles={['User', 'Admin']} path="/rental_point/reservations">
+              <RentalPointReservations />
+            </PrivateRoute>
+            <Route path="/logout">
+              <Logout />
+            </Route>
+            <PrivateRoute roles={['User']} path="/reservations">
               <ReservationPage />
-            </Route>
-            <Route path="/rentBikes">
+            </PrivateRoute>
+            <PrivateRoute roles={['Admin']} path="/rentBikes">
               <RentPage />
-            </Route>
-            <Route path="/returnBikes">
+            </PrivateRoute>
+            <PrivateRoute roles={['Admin']} path="/returnBikes">
               <ReturnPage />
-            </Route>
+            </PrivateRoute>
           </Switch>
         </Router>
       </div>
