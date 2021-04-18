@@ -3,20 +3,20 @@ import React, { useEffect, useState } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { BikelyApi } from '../api/BikelyApi';
+import { userState } from '../states/user';
 
 export const PrivateRoute = ({ children, roles, ...rest }) => {
   const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    setUserProfile(BikelyApi.profile);
+    setUserProfile(userState.profile);
   }, []);
 
   return (
     <Route
       {...rest}
       render={(props) => {
-        if (!BikelyApi.userHasAuthenticated()) {
+        if (!userState.isAuthenticated()) {
           return <Redirect to={{ pathname: '/login' }} />;
         }
 

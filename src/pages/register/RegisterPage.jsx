@@ -7,6 +7,7 @@ import { RegisterForm } from '../../components/forms';
 import { validateEmail, validatePassword, validateUsername } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
 import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
+import { userState } from '../../states/user';
 
 import { useStyles } from './RegisterPage.styles';
 
@@ -56,14 +57,13 @@ export const RegisterPage = () => {
       if (loginResponse.error) {
         setFormError('Something went wrong');
         setSubmitting(false);
-      } else if (BikelyApi.userHasAuthenticated()) history.push('/login');
+      } else if (userState.isAuthenticated()) history.push('/login');
     } else {
       if (registerResponse.statusCode === 400 && Array.isArray(registerResponse.message))
         setFormError(registerResponse.message[0]);
       setFormError('Something went wrong');
     }
     setFormError('Something went wrong');
-    console.table(registerResponse);
     setSubmitting(false);
     setLoading(() => false);
   };

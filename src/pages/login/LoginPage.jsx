@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { LoginForm } from '../../components/forms';
 import { validateEmail, validatePassword } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
+import { userState } from '../../states/user';
 import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
 
 import { useStyles } from './Login.styles';
@@ -20,7 +21,7 @@ export const LoginPage = () => {
   const [inputValues, setInputValues] = useState(initialValues);
   const [inputErrors, setInputErrors] = useState(initialValues);
   const [formError, setFormError] = useState('');
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validate = (values) => {
     const errors = inputErrors;
@@ -54,10 +55,9 @@ export const LoginPage = () => {
         setFormError('Invalid credentials');
       } else {
         setFormError('Something went wrong');
-        console.table(result);
       }
       setSubmitting(false);
-    } else if (BikelyApi.userHasAuthenticated()) {
+    } else if (userState.isAuthenticated()) {
       history.push('/');
     }
     setLoading(() => false);
