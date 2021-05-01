@@ -1,28 +1,37 @@
-import React, { useContext } from 'react';
-import { AppBar } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
 
-import { StoreContext } from '../../states/Store';
+import { BikelyApi } from '../../api/BikelyApi';
 
 import { Basic } from './Basic';
 import { User } from './User';
 import { Admin } from './Admin';
-import { useStyles } from './Nav.style';
 
 export const Nav = () => {
-  const classes = useStyles();
-  const { state, isAuthenticated } = useContext(StoreContext);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState({});
+
+  function handleUserChange() {
+    setIsAuthenticated(BikelyApi.userHasAuthenticated());
+    setUserRole(BikelyApi.profile.role);
+  }
+
+  useEffect(() => {
+    BikelyApi.registerObserver(handleUserChange);
+    setIsAuthenticated(BikelyApi.userHasAuthenticated());
+    setUserRole(BikelyApi.profile.role);
+
+    return () => {
+      BikelyApi.removeObserver(handleUserChange);
+    };
+  }, []);
 
   function getProperNavbar() {
-    if (isAuthenticated() && state.profile.role) {
-      return state.profile.role === 'User' ? <User /> : <Admin />;
+    if (isAuthenticated) {
+      return userRole === 'User' ? <User /> : <Admin />;
     }
 
     return <Basic />;
   }
 
-  return (
-    <AppBar className={classes.nav} position="sticky">
-      {getProperNavbar()}
-    </AppBar>
-  );
+  return getProperNavbar();
 };
