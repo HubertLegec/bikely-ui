@@ -32,7 +32,7 @@ export const ReservationsTable = () => {
 
       if (reservations && reservations.length > 0) setReservations(sortReservations(reservations));
     })();
-  }, []);
+  }, [profile, accessToken]);
 
   return (
     <div className={classes.root}>

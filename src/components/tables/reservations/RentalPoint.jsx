@@ -33,7 +33,7 @@ export const ReservationsTable = () => {
     }
 
     setReservations(fetchRentalPointReservations());
-  }, []);
+  }, [profile, accessToken]);
 
   function handleClick(event) {
     const button = event.target.tagName === 'BUTTON' ? event.target : event.target.closest('button');

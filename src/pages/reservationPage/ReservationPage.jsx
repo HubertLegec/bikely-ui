@@ -43,7 +43,7 @@ export const ReservationPage = () => {
       }
       setIsLoading(false);
     })();
-  }, [formValues.startDate]);
+  }, [formValues.startDate, accessToken]);
 
   const filterTable = (bikes) => {
     const filter = {
