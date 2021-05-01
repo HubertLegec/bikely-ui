@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Paper, useTheme } from '@material-ui/core';
 import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
@@ -6,8 +6,9 @@ import { useHistory } from 'react-router-dom';
 import { LoginForm } from '../../components/forms';
 import { validateEmail, validatePassword } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
-import { userState } from '../../states/user';
 import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
+import { StoreContext } from '../../states/Store';
+import { SET_ACCESS_TOKEN, SET_PROFILE } from '../../states/reducer';
 
 import { useStyles } from './Login.styles';
 
@@ -17,6 +18,7 @@ export const LoginPage = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const history = useHistory();
+  const storeContext = useContext(StoreContext);
 
   const [inputValues, setInputValues] = useState(initialValues);
   const [inputErrors, setInputErrors] = useState(initialValues);
@@ -50,6 +52,7 @@ export const LoginPage = () => {
     setFormError('');
     if (!loading) setLoading(() => true);
     const result = await BikelyApi.login(values);
+
     if (result.error) {
       if (result.statusCode === 401) {
         setFormError('Invalid credentials');
@@ -57,7 +60,13 @@ export const LoginPage = () => {
         setFormError('Something went wrong');
       }
       setSubmitting(false);
-    } else if (userState.isAuthenticated()) {
+    } else {
+      const profileAction = { type: SET_PROFILE, profile: result.profile };
+      const accessTokenAction = { type: SET_ACCESS_TOKEN, accessToken: result.accessToken };
+
+      storeContext.dispatch(profileAction);
+      storeContext.dispatch(accessTokenAction);
+      setSubmitting(false);
       history.push('/');
     }
     setLoading(() => false);

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { AppBar } from '@material-ui/core';
 
-import { userState } from '../../states/user';
+import { StoreContext } from '../../states/Store';
 
 import { Basic } from './Basic';
 import { User } from './User';
@@ -10,29 +10,11 @@ import { useStyles } from './Nav.style';
 
 export const Nav = () => {
   const classes = useStyles();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState('');
-
-  function handleUserChange() {
-    const profile = userState.profile;
-
-    setIsAuthenticated(userState.isAuthenticated());
-    profile ? setUserRole(profile.role) : setUserRole('');
-  }
-
-  useEffect(() => {
-    userState.registerObserver(handleUserChange);
-    setIsAuthenticated(userState.isAuthenticated());
-    if (userState.profile) setUserRole(userState.profile.role);
-
-    return () => {
-      userState.removeObserver(handleUserChange);
-    };
-  }, []);
+  const { state, isAuthenticated } = useContext(StoreContext);
 
   function getProperNavbar() {
-    if (isAuthenticated) {
-      return userRole === 'User' ? <User /> : <Admin />;
+    if (isAuthenticated() && state.profile.role) {
+      return state.profile.role === 'User' ? <User /> : <Admin />;
     }
 
     return <Basic />;

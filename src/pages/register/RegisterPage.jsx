@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Paper, useTheme } from '@material-ui/core';
 import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
@@ -7,7 +7,8 @@ import { RegisterForm } from '../../components/forms';
 import { validateEmail, validatePassword, validateUsername } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
 import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
-import { userState } from '../../states/user';
+import { StoreContext } from '../../states/Store';
+import { SET_ACCESS_TOKEN, SET_PROFILE } from '../../states/reducer';
 
 import { useStyles } from './RegisterPage.styles';
 
@@ -17,6 +18,7 @@ export const RegisterPage = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const history = useHistory();
+  const { dispatch } = useContext(StoreContext);
 
   const [inputValues, setInputValues] = useState(initialValues);
   const [inputErrors, setInputErrors] = useState(initialValues);
@@ -57,7 +59,14 @@ export const RegisterPage = () => {
       if (loginResponse.error) {
         setFormError('Something went wrong');
         setSubmitting(false);
-      } else if (userState.isAuthenticated()) history.push('/login');
+      } else {
+        const profileAction = { type: SET_PROFILE, profile: loginResponse.profile };
+        const accessTokenAction = { type: SET_ACCESS_TOKEN, accessToken: loginResponse.accessToken };
+
+        dispatch(profileAction);
+        dispatch(accessTokenAction);
+        history.push('/');
+      }
     } else {
       if (registerResponse.statusCode === 400 && Array.isArray(registerResponse.message))
         setFormError(registerResponse.message[0]);

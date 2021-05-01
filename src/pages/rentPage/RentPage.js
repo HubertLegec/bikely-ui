@@ -44,6 +44,7 @@ export const RentPage = () => {
   }, [rentalPoints]);
 
   const filterTable = (reservationRecords) => {
+    if (!reservationRecords) return false;
     const filter = {
       rentFromLocationId: filterValues.rentFromLocation,
       userEmail: filterValues.userEmail,

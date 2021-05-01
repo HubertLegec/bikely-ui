@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@material-ui/core';
 
 import { BikelyApi } from '../../../api/BikelyApi';
+import { StoreContext } from '../../../states/Store';
 
 import { useStyles } from './reservations.style';
 
@@ -19,6 +20,9 @@ const headCells = [
 export const ReservationsTable = () => {
   const [reservations, setReservations] = useState([]);
   const classes = useStyles();
+  const {
+    state: { profile, accessToken },
+  } = useContext(StoreContext);
 
   const sortReservations = (reservations) => {
     return reservations.sort((a, b) => a.plannedDateFrom - b.plannedDateFrom);
@@ -26,7 +30,7 @@ export const ReservationsTable = () => {
 
   useEffect(() => {
     (async function () {
-      const reservations = await BikelyApi.getUserBasedReservations({ userId: true });
+      const reservations = await BikelyApi.getUserBasedReservations(profile, accessToken);
 
       if (reservations && reservations.length > 0) setReservations(sortReservations(reservations));
     })();

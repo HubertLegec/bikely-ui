@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Grid, Paper } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
@@ -11,6 +11,7 @@ import Slide from '@material-ui/core/Slide';
 import { BikelyApi } from '../../api/BikelyApi';
 import { ReturnTable } from '../../components/return/ReturnTable';
 import { ReturnFilters } from '../../components/return/ReturnFilters';
+import { StoreContext } from '../../states/Store';
 
 import { convertToRentRecords, generatePicklistData } from './ReturnPage.service';
 
@@ -25,22 +26,25 @@ export const ReturnPage = () => {
     rentToLocation: '',
     bikeNumber: '',
   });
+  const {
+    state: { accessToken },
+  } = useContext(StoreContext);
 
   useEffect(() => {
-    BikelyApi.getRentalPoints().then((rentalPoints) => {
+    BikelyApi.getRentalPoints(accessToken).then((rentalPoints) => {
       setRentalPoints(rentalPoints);
     });
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     if (rentalPoints.length) {
-      BikelyApi.getPresentRents()
+      BikelyApi.getPresentRents(accessToken)
         .then((presentRents) => {
           setRentRecords(convertToRentRecords(presentRents, rentalPoints));
         })
         .then(setIsLoading(false));
     }
-  }, [rentalPoints]);
+  }, [rentalPoints, accessToken]);
 
   const filterTable = (reservationRecords) => {
     const filter = {
@@ -75,7 +79,7 @@ export const ReturnPage = () => {
   const handleConfirmReturn = () => {
     if (selectedRents.length) {
       selectedRents.forEach((id) => {
-        BikelyApi.returnBike(filterValues.rentToLocation, id).then(
+        BikelyApi.returnBike(filterValues.rentToLocation, id, accessToken).then(
           setRentRecords(
             rentRecords.filter((record) => {
               return record.id !== id;
