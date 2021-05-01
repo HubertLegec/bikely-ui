@@ -1,76 +1,7 @@
 export class BikelyApi {
   static apiUrl = 'https://coderscamp-bikely.herokuapp.com';
-  static _accessToken = '';
-  static _profile;
-  static observers = [];
 
-  static registerObserver(observer) {
-    BikelyApi.observers.push(observer);
-  }
-  static notifyObservers() {
-    for (const observer of BikelyApi.observers) {
-      observer();
-    }
-  }
-  static removeObserver(observer) {
-    const observerIndex = BikelyApi.observers.indexOf(observer);
-    BikelyApi.observers.splice(observerIndex, 1);
-  }
-
-  static set accessToken(accessToken) {
-    localStorage.setItem('access_token', accessToken);
-    BikelyApi._accessToken = accessToken;
-  }
-
-  static get accessToken() {
-    if (!BikelyApi._accessToken) {
-      const accessTokenFromLocalStorage = localStorage.getItem('access_token');
-
-      if (accessTokenFromLocalStorage) {
-        BikelyApi._accessToken = accessTokenFromLocalStorage;
-
-        return accessTokenFromLocalStorage;
-      }
-
-      return '';
-    }
-
-    return BikelyApi._accessToken;
-  }
-
-  static async getProfile() {
-    if (BikelyApi._profile) return BikelyApi._profile;
-    const profileFromLocalStorage = JSON.parse(localStorage.getItem('profile'));
-
-    if (profileFromLocalStorage && Object.keys(profileFromLocalStorage).length > 0) {
-      BikelyApi._profile = profileFromLocalStorage;
-
-      return profileFromLocalStorage;
-    }
-
-    const profile = await BikelyApi.fetchProfile();
-    if (profile.ok) return profile;
-    BikelyApi.handleError();
-  }
-
-  static get profile() {
-    if (BikelyApi._profile) return BikelyApi._profile;
-    const profileFromLocalStorage = JSON.parse(localStorage.getItem('profile'));
-    if (profileFromLocalStorage) {
-      BikelyApi._profile = profileFromLocalStorage;
-
-      return profileFromLocalStorage;
-    }
-
-    return null;
-  }
-
-  static set profile(profile) {
-    BikelyApi._profile = profile;
-    localStorage.setItem('profile', JSON.stringify(profile));
-  }
-
-  static async fetchProfile() {
+  static async fetchProfile(accessToken = '') {
     try {
       const response = await fetch(BikelyApi.apiUrl + '/users/me', {
         method: 'GET',
@@ -78,17 +9,13 @@ export class BikelyApi {
         credentials: 'omit',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${BikelyApi.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Access-Control-Allow-Credentials': true,
         },
       });
-
       const result = await response.json();
 
       if (!response.ok) result.error = true;
-
-      BikelyApi.profile = result;
-      BikelyApi.notifyObservers();
 
       return result;
     } catch (error) {
@@ -106,22 +33,16 @@ export class BikelyApi {
         },
         body: JSON.stringify(values),
       });
-      const result = await response.json();
-      if (!response.ok) result.error = true;
-      else BikelyApi.accessToken = result.access_token;
+      const loginBody = await response.json();
+      const profile = await BikelyApi.fetchProfile(loginBody.access_token);
 
-      BikelyApi.fetchProfile();
+      if (!response.ok) loginBody.error = true;
+      if (!profile.ok) loginBody.error = true;
 
-      return result;
+      return { accessToken: loginBody.access_token, profile };
     } catch (error) {
       BikelyApi.handleError(error);
     }
-  }
-
-  static logout() {
-    BikelyApi.accessToken = '';
-    BikelyApi.profile = '';
-    BikelyApi.notifyObservers();
   }
 
   static async register(values) {
@@ -139,9 +60,7 @@ export class BikelyApi {
     return result;
   }
 
-  static async getUserBasedReservations() {
-    const profile = await BikelyApi.getProfile();
-
+  static async getUserBasedReservations(profile, accessToken) {
     const response = await fetch(
       `${BikelyApi.apiUrl}/reservations/${profile.role === 'User' ? 'users' : 'rental_points/' + profile.rentalPoint}`,
       {
@@ -149,7 +68,7 @@ export class BikelyApi {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${BikelyApi.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       },
     );
@@ -157,7 +76,7 @@ export class BikelyApi {
     return await response.json();
   }
 
-  static async getBikes(startDate) {
+  static async getBikes(startDate, accessToken) {
     const date = Date.parse(startDate);
 
     return await fetch(`${BikelyApi.apiUrl}/bikes?reservationDate=${date}`, {
@@ -166,20 +85,22 @@ export class BikelyApi {
       credentials: 'omit',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Access-Control-Allow-Credentials': true,
       },
-    }).then((res) => res.json());
+    })
+      .then((res) => (res.ok ? res.json() : []))
+      .catch((error) => BikelyApi.handleError(error));
   }
 
-  static async postReservation(reservation) {
+  static async postReservation(reservation, accessToken) {
     const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
       method: 'POST',
       mode: 'cors',
       credentials: 'omit',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
         'Access-Control-Allow-Credentials': true,
       },
       body: JSON.stringify(reservation),
@@ -191,28 +112,33 @@ export class BikelyApi {
     return result;
   }
 
-  static async getReservations() {
-    const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
-      },
-    });
-    const result = await response.json();
-    if (!response.ok) result.error = true;
+  static async getReservations(accessToken) {
+    try {
+      const response = await fetch(`${BikelyApi.apiUrl}/reservations`, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      const result = await response.json();
 
-    return result;
+      if (!response.ok) throw new Error(result);
+
+      return result;
+    } catch (error) {
+      BikelyApi.handleError(error);
+    }
   }
 
-  static async getPresentRents() {
+  static async getPresentRents(accessToken) {
     const response = await fetch(`${BikelyApi.apiUrl}/reservations/rents/present`, {
       method: 'GET',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     const result = await response.json();
@@ -221,13 +147,13 @@ export class BikelyApi {
     return result;
   }
 
-  static async getRentalPoints() {
+  static async getRentalPoints(accessToken) {
     const response = await fetch(`${BikelyApi.apiUrl}/rentalpoints`, {
       method: 'GET',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     const result = await response.json();
@@ -236,13 +162,13 @@ export class BikelyApi {
     return result;
   }
 
-  static async confirmRent(reservationId) {
+  static async confirmRent(reservationId, accessToken) {
     const response = await fetch(`${BikelyApi.apiUrl}/reservations/rent/${reservationId}`, {
       method: 'PUT',
       mode: 'cors',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${BikelyApi.accessToken}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
     const result = await response.json();
@@ -251,7 +177,7 @@ export class BikelyApi {
     return result;
   }
 
-  static async returnBike(rentalPointTo_id, reservationId) {
+  static async returnBike(rentalPointTo_id, reservationId, accessToken) {
     const response = await fetch(
       `${BikelyApi.apiUrl}/reservations/return/${reservationId}?rentalpoint_id=${rentalPointTo_id}`,
       {
@@ -259,7 +185,7 @@ export class BikelyApi {
         mode: 'cors',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${BikelyApi.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       },
     );
@@ -267,10 +193,6 @@ export class BikelyApi {
     if (!response.ok) result.error = true;
 
     return result;
-  }
-
-  static userHasAuthenticated() {
-    return !!BikelyApi.accessToken;
   }
 
   static handleError(error) {

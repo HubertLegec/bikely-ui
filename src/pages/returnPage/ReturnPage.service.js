@@ -1,6 +1,7 @@
 import { format, parseISO } from 'date-fns';
 
 export const convertToRentRecords = (rents, rentalPoints) => {
+  if (!rents || !rents.length > 0) return [];
   const response = [];
 
   rents.forEach((rent) => {

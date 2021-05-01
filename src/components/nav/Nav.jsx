@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { AppBar } from '@material-ui/core';
 
-import { BikelyApi } from '../../api/BikelyApi';
+import { StoreContext } from '../../states/Store';
 
 import { Basic } from './Basic';
 import { User } from './User';
@@ -10,29 +10,11 @@ import { useStyles } from './Nav.style';
 
 export const Nav = () => {
   const classes = useStyles();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState({});
-
-  function handleUserChange() {
-    const profile = BikelyApi.profile;
-
-    setIsAuthenticated(BikelyApi.userHasAuthenticated());
-    profile ? setUserRole(profile.role) : setUserRole({});
-  }
-
-  useEffect(() => {
-    BikelyApi.registerObserver(handleUserChange);
-    setIsAuthenticated(BikelyApi.userHasAuthenticated());
-    if (BikelyApi.profile) setUserRole(BikelyApi.profile.role);
-
-    return () => {
-      BikelyApi.removeObserver(handleUserChange);
-    };
-  }, []);
+  const { profile, isAuthenticated } = useContext(StoreContext);
 
   function getProperNavbar() {
-    if (isAuthenticated) {
-      return userRole === 'User' ? <User /> : <Admin />;
+    if (isAuthenticated() && profile.role) {
+      return profile.role === 'User' ? <User /> : <Admin />;
     }
 
     return <Basic />;

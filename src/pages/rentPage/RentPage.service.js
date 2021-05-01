@@ -1,7 +1,7 @@
 import { format, parseISO } from 'date-fns';
 
 export const convertToReservationRecords = (reservations, rentalPoints) => {
-  if (!reservations) return {};
+  if (!reservations) return [];
   const response = [];
 
   reservations.forEach((reservation) => {
@@ -36,6 +36,7 @@ export const convertToReservationRecords = (reservations, rentalPoints) => {
 };
 
 export const generatePicklistData = (rentalPoints, reservationRecords) => {
+  if (!rentalPoints || !reservationRecords) return '';
   const points = rentalPoints.map((point) => {
     return { id: point._id, location: point.location };
   });

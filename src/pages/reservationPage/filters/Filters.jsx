@@ -5,7 +5,6 @@ import {
   FormControlLabel,
   FormHelperText,
   Switch,
-  useTheme,
   InputLabel,
   FormControl,
   Select,
@@ -33,9 +32,7 @@ export const Filters = ({
   onEndDateChange,
   createReservationRequest,
 }) => {
-  const theme = useTheme();
-  const classes = useStyles(theme);
-
+  const classes = useStyles();
   const bikeTypes = new Set(
     bikes.map((e) => {
       return e.type;

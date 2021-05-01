@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Paper, useTheme } from '@material-ui/core';
 import { useFormik } from 'formik';
 import { useHistory } from 'react-router-dom';
@@ -7,6 +7,8 @@ import { LoginForm } from '../../components/forms';
 import { validateEmail, validatePassword } from '../../helpers/validation';
 import { BikelyApi } from '../../api/BikelyApi';
 import { LoginRegisterFormWrapper } from '../../components/loginRegisterFormWrapper/LoginRegisterFormWrapper';
+import { StoreContext } from '../../states/Store';
+import { SET_ACCESS_TOKEN, SET_PROFILE } from '../../states/reducer';
 
 import { useStyles } from './Login.styles';
 
@@ -16,11 +18,12 @@ export const LoginPage = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const history = useHistory();
+  const { dispatch } = useContext(StoreContext);
 
   const [inputValues, setInputValues] = useState(initialValues);
   const [inputErrors, setInputErrors] = useState(initialValues);
   const [formError, setFormError] = useState('');
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validate = (values) => {
     const errors = inputErrors;
@@ -49,15 +52,21 @@ export const LoginPage = () => {
     setFormError('');
     if (!loading) setLoading(() => true);
     const result = await BikelyApi.login(values);
+
     if (result.error) {
       if (result.statusCode === 401) {
         setFormError('Invalid credentials');
       } else {
         setFormError('Something went wrong');
-        console.table(result);
       }
       setSubmitting(false);
-    } else if (BikelyApi.userHasAuthenticated()) {
+    } else {
+      const profileAction = { type: SET_PROFILE, profile: result.profile };
+      const accessTokenAction = { type: SET_ACCESS_TOKEN, accessToken: result.accessToken };
+
+      dispatch(profileAction);
+      dispatch(accessTokenAction);
+      setSubmitting(false);
       history.push('/');
     }
     setLoading(() => false);
