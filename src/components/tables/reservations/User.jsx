@@ -20,9 +20,7 @@ const headCells = [
 export const ReservationsTable = () => {
   const [reservations, setReservations] = useState([]);
   const classes = useStyles();
-  const {
-    state: { profile, accessToken },
-  } = useContext(StoreContext);
+  const { profile, accessToken } = useContext(StoreContext);
 
   const sortReservations = (reservations) => {
     return reservations.sort((a, b) => a.plannedDateFrom - b.plannedDateFrom);

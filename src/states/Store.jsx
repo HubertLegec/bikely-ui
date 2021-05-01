@@ -17,9 +17,7 @@ export const Store = ({ children }) => {
     return !!state.accessToken;
   };
 
-  console.log(state);
-
-  return <StoreContext.Provider value={{ state, dispatch, isAuthenticated }}>{children}</StoreContext.Provider>;
+  return <StoreContext.Provider value={{ ...state, dispatch, isAuthenticated }}>{children}</StoreContext.Provider>;
 };
 
 Store.propTypes = {

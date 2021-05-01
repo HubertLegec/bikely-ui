@@ -18,7 +18,7 @@ export const LoginPage = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const history = useHistory();
-  const storeContext = useContext(StoreContext);
+  const { dispatch } = useContext(StoreContext);
 
   const [inputValues, setInputValues] = useState(initialValues);
   const [inputErrors, setInputErrors] = useState(initialValues);
@@ -64,8 +64,8 @@ export const LoginPage = () => {
       const profileAction = { type: SET_PROFILE, profile: result.profile };
       const accessTokenAction = { type: SET_ACCESS_TOKEN, accessToken: result.accessToken };
 
-      storeContext.dispatch(profileAction);
-      storeContext.dispatch(accessTokenAction);
+      dispatch(profileAction);
+      dispatch(accessTokenAction);
       setSubmitting(false);
       history.push('/');
     }

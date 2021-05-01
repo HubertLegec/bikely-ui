@@ -6,10 +6,7 @@ import PropTypes from 'prop-types';
 import { StoreContext } from '../states/Store';
 
 export const PrivateRoute = ({ children, roles, ...rest }) => {
-  const {
-    state: { profile: { role } = null },
-    isAuthenticated,
-  } = useContext(StoreContext);
+  const { profile: { role } = null, isAuthenticated } = useContext(StoreContext);
 
   return (
     <Route

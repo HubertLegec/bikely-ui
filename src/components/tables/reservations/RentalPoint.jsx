@@ -18,9 +18,7 @@ const headCells = [
 
 export const ReservationsTable = () => {
   const [reservations, setReservations] = useState([]);
-  const {
-    state: { profile, accessToken },
-  } = useContext(StoreContext);
+  const { profile, accessToken } = useContext(StoreContext);
   const classes = useStyles();
 
   const sortReservations = (reservations) => {

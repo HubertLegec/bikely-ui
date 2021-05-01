@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Grid, Paper } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import DateFnsAdapter from '@material-ui/lab/AdapterDateFns';
@@ -9,11 +9,13 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Slide from '@material-ui/core/Slide';
 
 import { BikelyApi } from '../../api/BikelyApi';
+import { StoreContext } from '../../states/Store';
 
 import { Filters } from './filters/Filters';
 import { BikeTable } from './bikeTable/BikeTable';
 
 export const ReservationPage = () => {
+  const { accessToken } = useContext(StoreContext);
   const [bikes, setBikes] = useState([]);
   const [selectedBikes, setSelectedBikes] = useState([]);
 
@@ -34,8 +36,8 @@ export const ReservationPage = () => {
   useEffect(() => {
     (async function () {
       try {
-        const bikes = await BikelyApi.getBikes(formValues.startDate);
-        setBikes(bikes);
+        const bikes = await BikelyApi.getBikes(formValues.startDate, accessToken);
+        if (bikes && bikes.length > 0) setBikes(bikes);
       } catch (error) {
         console.log('error:', error);
       }
@@ -50,6 +52,8 @@ export const ReservationPage = () => {
       frameSize: formValues.selectedFrameSize,
       location: formValues.rentFrom,
     };
+
+    if (!bikes || !bikes.length > 0) return false;
 
     return bikes.filter((bike) => {
       bike.location = bike.rentalPoint.id;

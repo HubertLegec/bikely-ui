@@ -26,9 +26,7 @@ export const ReturnPage = () => {
     rentToLocation: '',
     bikeNumber: '',
   });
-  const {
-    state: { accessToken },
-  } = useContext(StoreContext);
+  const { accessToken } = useContext(StoreContext);
 
   useEffect(() => {
     BikelyApi.getRentalPoints(accessToken).then((rentalPoints) => {

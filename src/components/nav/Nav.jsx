@@ -10,11 +10,11 @@ import { useStyles } from './Nav.style';
 
 export const Nav = () => {
   const classes = useStyles();
-  const { state, isAuthenticated } = useContext(StoreContext);
+  const { profile, isAuthenticated } = useContext(StoreContext);
 
   function getProperNavbar() {
-    if (isAuthenticated() && state.profile.role) {
-      return state.profile.role === 'User' ? <User /> : <Admin />;
+    if (isAuthenticated() && profile.role) {
+      return profile.role === 'User' ? <User /> : <Admin />;
     }
 
     return <Basic />;

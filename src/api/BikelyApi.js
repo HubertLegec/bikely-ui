@@ -88,7 +88,9 @@ export class BikelyApi {
         Authorization: `Bearer ${accessToken}`,
         'Access-Control-Allow-Credentials': true,
       },
-    }).then((res) => res.json());
+    })
+      .then((res) => (res.ok ? res.json() : []))
+      .catch((error) => BikelyApi.handleError(error));
   }
 
   static async postReservation(reservation, accessToken) {
